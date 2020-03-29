@@ -25,7 +25,7 @@ SECRET_KEY = '4h56pfl5f0(nhg=k(f__t2x(e!i@-$$2#(!n8lmomc+wp4ptu0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['limitless-wildwood-61701.herokuapp.com']
 
 
 # Application definition
