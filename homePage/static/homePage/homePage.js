@@ -38,6 +38,7 @@ function update() {
 
       this.graph.selectAll('.node').remove();
       this.graph.selectAll('.link').remove();
+      data.sort((a,b)=>a.number - b.number)
       data.sort((a,b)=>a.number % 2 == 1 ? a.number - b.number : b.number - a.number)
 
         // stratify the data
