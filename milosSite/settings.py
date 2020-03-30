@@ -26,12 +26,13 @@ SECRET_KEY = '4h56pfl5f0(nhg=k(f__t2x(e!i@-$$2#(!n8lmomc+wp4ptu0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['limitless-wildwood-61701.herokuapp.com', '127.0.0.1','localhost']
+ALLOWED_HOSTS = ['limitless-wildwood-61701.herokuapp.com', '127.0.0.1','localhost','http://127.0.0.1:8000/users/']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tree.apps.TreeConfig',
     'homePage.apps.HomepageConfig',
-    'corsheaders',
+    
 ]
 
 MIDDLEWARE = [
@@ -63,8 +64,11 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:5000",
     "http://127.0.0.1:8000",
     "https://code.jquery.com",
+    "https://limitless-wildwood-61701.herokuapp.com"
     
 ]
+
+
 #CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -74,18 +78,14 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'my-custom-header',
 ]
+
 ROOT_URLCONF = 'milosSite.urls'
 
 TEMPLATES = [
