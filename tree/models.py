@@ -118,7 +118,7 @@ class Tree (models.Model):
             nodesList = nodesList.filter(user = user)
 
         
-        #
+        #finds the first node if user has zero nodes so far
         if not nodesList.exists() and Node.objects.all().exists():
             easiestNodeInWholeTree = self.findNodeToPay(amount = 1)[0]
             startNode = self.findFreeChild(easiestNodeInWholeTree)

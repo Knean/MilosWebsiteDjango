@@ -131,10 +131,10 @@ function update() {
 
     }
   
-    $.ajax({url: "http://127.0.0.1:8000/users/", success: function(result){
+    $.ajax({url: "https://limitless-wildwood-61701.herokuapp.com/users/", success: function(result){
       users = result
      }});
-    $.ajax({url: "http://127.0.0.1:8000/nodes/", success: function(result){
+    $.ajax({url: "https://limitless-wildwood-61701.herokuapp.com/nodes/", success: function(result){
       data = result
       console.log(data, "this is the damn data")
       update()
