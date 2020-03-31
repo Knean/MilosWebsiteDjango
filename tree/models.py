@@ -54,7 +54,8 @@ class Tree (models.Model):
                 child2 = currentNode.child2Value
                 child1Value = currentNode.child1Value
                 child2Value = currentNode.child2Value
-                smallerChild = currentNode.child2 if child1Value - child2Value < 0 else currentNode.child1                
+                smallerChild = currentNode.child1 if child1Value - child2Value < 0 else currentNode.child2  
+                print (smallerChild , "this is the smaller child")              
                 difference = abs(child1Value - child2Value)
                 generator = nodeGenerator(smallerChild)
 
