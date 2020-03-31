@@ -42,12 +42,46 @@ class Tree (models.Model):
             id = 1
         while nodesToPay and amount>0:
             currentNodeNumber = nodesToPay.pop(0)
-            
-            generator = nodeGenerator(currentNodeNumber)
+            print(currentNodeNumber, " this is the node we're working on")
+            currentNode = Node.objects.filter(number=currentNodeNumber)
             try:
                 untilPay = Node.objects.get(number=currentNodeNumber).childrenMissing
             except:
-                untilPay = 63           
+                untilPay = 63 
+            if currentNode.exists():
+                currentNode = currentNode.first()
+                child1 = currentNode.child1Value
+                child2 = currentNode.child2Value
+                child1Value = currentNode.child1Value
+                child2Value = currentNode.child2Value
+                smallerChild = currentNode.child2 if child1Value - child2Value < 0 else currentNode.child1                
+                difference = abs(child1Value - child2Value)
+                generator = nodeGenerator(smallerChild)
+
+
+                while difference >0 and amount > 0 and untilPay > 0:# and node is not paid????
+                    nodeNumber = next(generator)
+                    if not tree.filter(number = nodeNumber).exists() and not any(filter(lambda x:x.number == nodeNumber, buyList)):
+                        difference -= 1
+                        amount -=1
+                        untilPay -= 1
+                        id += 1
+                        buyList.append(
+                            Node(tree = self, id = id, user =user, number = nodeNumber)
+                        )
+
+            
+                #generator
+                #if not in tree
+                # generator next
+                # else add to buy list
+                #child one or two?
+                #get the node
+                #while lower child < bigger child and ammount > 0
+                # while 
+                
+            generator = nodeGenerator(currentNodeNumber)
+          
             
             while amount > 0 and untilPay>0:
                 nodeNumber = next(generator)
@@ -83,7 +117,7 @@ class Tree (models.Model):
         if user:
             nodesList = nodesList.filter(user = user)
 
-        print(nodesList, "should be empty",Node.objects.all().exists())
+        
         #
         if not nodesList.exists() and Node.objects.all().exists():
             easiestNodeInWholeTree = self.findNodeToPay(amount = 1)[0]
@@ -135,22 +169,24 @@ class Node (models.Model):
 
 
     def create(cls,nodes, tree):
+     
         createNodes = []        
         childList =[]
 
         # move this bit to the init section of the class
         for node in nodes:           
             #populate children fields 
-            children = findChildren(node.number)
-            node.child1 = children[0]
-            node.child2 = children[1]          
+            childGenerator = nodeGenerator(node.number)   
+            next(childGenerator)         
+            node.child1 = next(childGenerator)
+            node.child2 = next(childGenerator)          
       
 
         createNodes = [node for node in nodes]        
         tree = Node.objects.all()   
 
         #update all parent nodes
-        #print(nodes, "createnodes before messing with them")
+       
         for node in nodes: 
             #print(node, " this node is being updated")
             generator = parentGenerator(node.number)
