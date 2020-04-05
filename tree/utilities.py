@@ -139,6 +139,8 @@ def parentGenerator(Node):
             Node = parent
 
 def childOf(parent, child):
+    if parent == child:
+        return True
     generator = parentGenerator(child)
     for gen_parent in generator:
         if gen_parent ["parent"] == parent:
