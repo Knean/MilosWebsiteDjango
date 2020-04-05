@@ -131,7 +131,7 @@ function update() {
 
     }
   
-    $.ajax({url: "https://limitless-wildwood-61701.herokuapp.com/", success: function(result){
+    $.ajax({url: "https://limitless-wildwood-61701.herokuapp.com/users/", success: function(result){
       users = result
      }});
     $.ajax({url: "https://limitless-wildwood-61701.herokuapp.com/nodes/", success: function(result){
