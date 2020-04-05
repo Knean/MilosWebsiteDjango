@@ -7,6 +7,8 @@ from timeit import default_timer as timer
 import math
 # Create your models here.
 class Tree (models.Model):
+
+
     name = models.CharField("", max_length=50)
 
     class Meta:
@@ -15,89 +17,149 @@ class Tree (models.Model):
 
     def __str__(self):
         return self.name
-    def updateParents(self, Node): 
-        currentNodeNumber = Node.number
-        while True:
-            parent = findParent(currentNodeNumber)
-            if parent:
-                #self.node_set.get(number=parent).children ADD CHILDRNE ATTRIBUTES
-                tree[parent].children[currentNodeNumber] +=1
-                tree[parent].calculateNodes()
-                currentNodeNumber  = findParent(currentNodeNumber)
-            else:
-                return
 
 
-    def buy(self,amount, startNode = None, user = User.objects.first()):
+
+    def buy(self,amount, startNode = None, user = User.objects.first(), create = True):
+        def updateParents(nodeNumber):
+            for nodePair in parentGenerator(nodeNumber):
+                print ("this should not be running ")
+                parentNodeNumber = nodePair["parent"]
+                try:
+                    parentNode = buyDict[parentNodeNumber]
+                except(KeyError):
+                    #never happens
+                    parentNode = tree.get(number = parentNodeNumber)
+                                           
+                if parentNode.child1 == nodePair["child"]:
+                    parentNode.child1Value +=1                                         
+                if parentNode.child2 ==  nodePair["child"]:
+                    parentNode.child2Value +=1 
+                parentNode.updateChildrenMissing()
+                print("parentNode: {} , nodePair: {}, nodeNumber: {}".format(parentNode,nodePair,nodeNumber)) 
+                buyDict[parentNodeNumber] = parentNode
+
+        buyDict = {}
         nodesToPay = self.findNodeToPay(amount = amount, user = user)
-        
+        nodesDict = {node.number: node for node in nodesToPay}
+        allRelevantNodes = []
         buyList = []
         tree = self.node_set.all().order_by("-id")
-        
-        if startNode == None:
-            startNode = getFreeNode() 
+        #tree = tree.filter(user = user)
+        #id doesnt auto increment in sqlite  
         try:
-            id = tree[0].id
+            id = tree.first().id + 1
         except:
             id = 1
+        
+
+        #calculate find smaller child
         while nodesToPay and amount>0:
-            currentNodeNumber = nodesToPay.pop(0)
-            print(currentNodeNumber, " this is the node we're working on")
-            currentNode = Node.objects.filter(number=currentNodeNumber)
-            try:
-                untilPay = Node.objects.get(number=currentNodeNumber).childrenMissing
-            except:
-                untilPay = 63 
-            if currentNode.exists():
-                currentNode = currentNode.first()
-                child1 = currentNode.child1Value
-                child2 = currentNode.child2Value
-                child1Value = currentNode.child1Value
-                child2Value = currentNode.child2Value
-                smallerChild = currentNode.child1 if child1Value - child2Value < 0 else currentNode.child2  
-                print (smallerChild , "this is the smaller child")              
-                difference = abs(child1Value - child2Value)
-                generator = nodeGenerator(smallerChild)
-
-
-                while difference >0 and amount > 0 and untilPay > 0:# and node is not paid????
-                    nodeNumber = next(generator)
-                    if not tree.filter(number = nodeNumber).exists() and not any(filter(lambda x:x.number == nodeNumber, buyList)):
-                        difference -= 1
-                        amount -=1
-                        untilPay -= 1
-                        id += 1
-                        buyList.append(
-                            Node(tree = self, id = id, user =user, number = nodeNumber)
-                        )
-
             
-                #generator
-                #if not in tree
-                # generator next
-                # else add to buy list
-                #child one or two?
-                #get the node
-                #while lower child < bigger child and ammount > 0
-                # while 
+            
+            # print(currentNodeNumber, " this is the node we're working on")
+            #why tho?
+            currentNode = nodesToPay.pop(0)
+            currentNodeNumber = currentNode.number
+            
+            # buyNodes could be a dictionary would be sexier for adding parents
+             
+            
+            untilPay = currentNode.childrenMissing
+            if not tree.filter(number = currentNodeNumber).exists():
+                untilPay += 1
+            #if node exists figure out which child branch is smaller
+
+            child1 = currentNode.child1
+            child2 = currentNode.child2
+            child1Value = currentNode.child1Value
+            child2Value = currentNode.child2Value
+            smallerChild = child1 if child1Value <= child2Value else child2   
+            print (smallerChild , "this is the smaller child")  
+
+            difference = abs(child1Value - child2Value)  
+
                 
             generator = nodeGenerator(currentNodeNumber)
-          
-            
+
+            #make this less retarded
+            #createnew node and keep updating its children
+            #add all parent nodes automatically to the buy list
             while amount > 0 and untilPay>0:
-                nodeNumber = next(generator)
-                #not in tree or in buy list
-                if not tree.filter(number = nodeNumber).exists() and not any(filter(lambda x:x.number == nodeNumber, buyList)):
-                    
-                    amount -=1
-                    untilPay -= 1
-                    id += 1
-                    buyList.append(
-                        Node(tree = self, id = id, user =user, number = nodeNumber))
-        
-        Node.create(buyList,tree)
+                nodeNumber = next(generator)               
+                #in the tree
+                #not in tree but in buylist
+                #not in tree or in buylist but on a wrong branch
+                #generator doesnt reset when branches equalize
+                #create new node if it is not already in the tree or the buy list    
+                # any(list(filter (lambda x:x.number == nodeNumber, buyList))):          
+                if not tree.filter(number = nodeNumber).exists() and not nodeNumber in buyDict:
+                    try:
+                        newNode = nodesDict[nodeNumber]
+                        try:
+                            value = int(newNode.id)
+                        except ValueError:
+                            id +=1
+                            newNode.id = id 
+                            
+                        #check if id is retarded
+                    except KeyError:
+                        # it is not in nodesdict or buydict
+                        #createnew one
+                        id +=1
+                        newNode = Node.create_object(
+                            tree = self,
+                            id = id, 
+                            user =user, 
+                            number = nodeNumber)
+                        print("why is id always one???: ", newNode)
+                           
+                    if difference == 0:
+                        buyDict[newNode.number] = newNode
+                        if create == False:
+                            return newNode
+                        updateParents(newNode.number)
+                        amount -=1                        
+                        untilPay -= 1
+                        #add all parents here
+                        #create fetchallparentesmethod???
+
+                    #if child nodes are not the same, append to smaller child
+                    #child of could be a node method
+
+                    if difference >0 and childOf(smallerChild, nodeNumber):
+                        
+                            difference -= 1 
+                            amount -=1                        
+                            untilPay -= 1
+                            buyDict[newNode.number] = newNode
+                            if create == False:
+                                return newNode
+                            updateParents(newNode.number)
+                            if difference == 0:
+                                #reset generator as we may have skipped a few nodes
+                                generator = nodeGenerator(currentNodeNumber)
+                        
+
+
+                #add parents
+ 
+
+                 
+            # do the parent update for every node in buydict
+            # makes sure we have an up to date number of childrenmissing
+            # parents are not in buy dict and they should be
+            # when adding a single element add all parents
+
+                       
+
+        #print(next(m.childrenMissing for m in buyList if m.number == 3), " this is how many children third node is missing")  
+        #print(buyList, len(buyList), "this is the buy list")
+        #get values from dictionary
+        Node.create(buyDict)
     
     def findFreeChild(self, startNode):
+        #returns number only
         generator = nodeGenerator(startNode)
         tree = Node.objects.all()
         while True:
@@ -108,10 +170,15 @@ class Tree (models.Model):
 
     
     
-    def findNodeToPay(self, startNode = 1, amount = 100, user = None ):
-        payoutOrder = []
-        completed = []
+    def findNodeToPay(self, startNode = 1, amount = 100, user = None  ):
+        tree = Tree.objects.first().node_set.all().order_by("-id")
         
+        try:
+            id = tree[0].id
+        except:
+            id = 1
+        payoutOrder = []
+        completed = []       
         
 
         nodesList = Node.objects.all().exclude(childrenMissing =0).order_by("childrenMissing")
@@ -122,32 +189,47 @@ class Tree (models.Model):
         #finds the first node if user has zero nodes so far
         if not nodesList.exists() and Node.objects.all().exists():
             easiestNodeInWholeTree = self.findNodeToPay(amount = 1)[0]
-            startNode = self.findFreeChild(easiestNodeInWholeTree)
-        generator = nodeGenerator(startNode)
+            easiestOwnerInWholeTree = easiestNodeInWholeTree.user
             
+            #asignnode
+            #reuse the buy logic
+            #add for user perhaps?
+            #
+            startNode = self.buy(user = easiestOwnerInWholeTree, amount = 1, create = False).number
+        
+        generator = nodeGenerator(startNode)  
         while amount>0 and nodesList.exists():
             nodesList = nodesList.exclude(childrenMissing__in = completed)
             if nodesList.exists():
                 easiest = nodesList[0].childrenMissing
-                easyNodes = list(nodesList.filter(childrenMissing = easiest))
+                #first element is the one that is easiest to buy
+                easyNodes = nodesList.filter(childrenMissing = easiest)
+                #get all nodes with the same amount of children missing
+                easyNodeDict = {node.number:node for node in easyNodes}
                 completed.append(easiest)
-                
+                # keep track of the completed levels of nodes                
                 easyNumbers = [node.number for node in easyNodes]
                
                 generator = nodeGenerator(startNode)
+                # find out which node should be done first and append to the payoutorder
                 while easyNumbers:
                     number = next(generator)
                     if number in easyNumbers:                        
-                        payoutOrder.append(number)
-                        easyNumbers.remove(number)
-                        #print("this bit is running")
+                        payoutOrder.append(easyNodeDict[number])
+                        easyNumbers.remove(number)                       
                         amount -= 1
         #no more nodes now what
         while amount >0:
-           
-            payoutOrder.append(next(generator))
+            number = next(generator)
+            newNode = Node.create_object(
+                #it has a user?
+                
+                tree = tree,
+                user = user, 
+                number = number) 
+            payoutOrder.append(newNode)
             amount -= 1
-        print(payoutOrder, "payoutorder")
+        #print(payoutOrder, "payoutorder")
         return payoutOrder
 
 
@@ -165,73 +247,51 @@ class Node (models.Model):
     child2Value = models.IntegerField(default = 0)
     
     @classmethod
-    #def create(cls,tree,owner,number):
+    def create_object(cls,tree,user,number, id = None):
+        generator = nodeGenerator(number)
+        next(generator)
+        return cls(
+            tree = Tree.objects.first(),
+            user = user,
+            number = number,
+            child1 = next(generator),
+            child2 = next(generator),
+            child1Value = 0,
+            child2Value = 0,
+            childrenMissing = 62,
+            id = id if id else "missing",
+              )
 
 
-
-    def create(cls,nodes, tree):
-     
-        createNodes = []        
-        childList =[]
-
-        # move this bit to the init section of the class
-        for node in nodes:           
-            #populate children fields 
-            childGenerator = nodeGenerator(node.number)   
-            next(childGenerator)         
-            node.child1 = next(childGenerator)
-            node.child2 = next(childGenerator)          
-      
-
-        createNodes = [node for node in nodes]        
-        tree = Node.objects.all()   
-
-        #update all parent nodes
-       
-        for node in nodes: 
-            #print(node, " this node is being updated")
-            generator = parentGenerator(node.number)
-            
-            for parent in generator:
-                
-                try:
-                    parentNode = next(m for m in createNodes if m.number == parent["parent"])
-                except:
-                    parentNode = tree.get(number = parent["parent"])
-                    #print(parentNode, "adding this to create list")
-                    createNodes.append(parentNode)
-
-                if parentNode.child1 == parent["child"]:
-                    parentNode.child1Value +=1                                         
-                if parentNode.child2 ==  parent["child"]:
-                    parentNode.child2Value +=1 
-                    
-        for node in createNodes:
-            node.updateChildrenMissing()
-
-        #update the database
+    @classmethod
+    def create(cls,nodesDict):
         
-        newAndUpdatedIDList = [node.id for node in createNodes]
-        #print (createNodes, "nodes about to be saved")
-        #sqlite allows only 999 elements in a query
-        while(newAndUpdatedIDList):
-            fraction = newAndUpdatedIDList[:950]
-            del newAndUpdatedIDList[:950]
-            oldSet = Node.objects.filter(pk__in = fraction)
+        newAndUpdatedIDList = [node.id for node in nodesDict.values()]
+        createNodes = [node for node in nodesDict.values()] 
+        
+        #sqlite allows only 999 elements in a query         
+        while(newAndUpdatedIDList):           
+            
+            oldSet = Node.objects.filter(pk__in = newAndUpdatedIDList[:950])
+            del newAndUpdatedIDList[:950]            
             oldSet.delete()
-
+            for node in createNodes[:950]:
+                print (node)
+            
+            print(  "nodes about to be made")
             Node.objects.bulk_create(createNodes[:950]) 
+            
             del createNodes[:950]
         
     def updateChildrenMissing(self):
         #call save manually
         child1Value = self.child1Value
-        child1Value = child1Value if child1Value <31 else 30
+        child1Value = child1Value if child1Value <32 else 31
 
         child2Value = self.child2Value
-        child2Value = child2Value if child2Value <31 else 30
+        child2Value = child2Value if child2Value <32 else 31
 
-        self.childrenMissing = 60 - child1Value - child2Value
+        self.childrenMissing = 62 - child1Value - child2Value
 
 
     
@@ -240,7 +300,8 @@ class Node (models.Model):
         verbose_name_plural = "Nodes"
 
     def __str__(self):
-        return self.tree.name + str(self.number) +" node"
+        return "number: {} id: {} , tree: {}".format(self.number, self.id, self.tree)
+        self.tree.name + str(self.number) +" node"
 class ChildNode(models.Model):
     parentNode = models.ForeignKey("Node", verbose_name="Child", on_delete=models.CASCADE)
     number = models.IntegerField()

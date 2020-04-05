@@ -137,3 +137,11 @@ def parentGenerator(Node):
                 parent += 1
             yield {"parent":parent, "child":Node}
             Node = parent
+
+def childOf(parent, child):
+    generator = parentGenerator(child)
+    for gen_parent in generator:
+        if gen_parent ["parent"] == parent:
+            
+            return True
+    return False

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tree.apps.TreeConfig',
     'homePage.apps.HomepageConfig',
+    'django_extensions'
     
 ]
 
