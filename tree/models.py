@@ -60,14 +60,20 @@ class Tree (models.Model):
             # print(currentNodeNumber, " this is the node we're working on")
             #why tho?
             currentNode = nodesToPay.pop(0)
+            try:
+                currentNode = buyDict[currentNode.number]
+            except KeyError:
+                pass
             currentNodeNumber = currentNode.number
             
             # buyNodes could be a dictionary would be sexier for adding parents
              
             
             untilPay = currentNode.childrenMissing
-            if not tree.filter(number = currentNodeNumber).exists():
+            if not tree.filter(number = currentNodeNumber).exists() and currentNodeNumber not in buyDict:
+                #pass
                 untilPay += 1
+                # this is broken
             #if node exists figure out which child branch is smaller
 
             child1 = currentNode.child1
