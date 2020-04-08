@@ -23,7 +23,7 @@ class Tree (models.Model):
     def buy(self,amount, startNode = None, user = User.objects.first(), create = True):
         def updateParents(nodeNumber):
             for nodePair in parentGenerator(nodeNumber):
-                print ("this should not be running ")
+               
                 parentNodeNumber = nodePair["parent"]
                 try:
                     parentNode = buyDict[parentNodeNumber]
@@ -36,7 +36,7 @@ class Tree (models.Model):
                 if parentNode.child2 ==  nodePair["child"]:
                     parentNode.child2Value +=1 
                 parentNode.updateChildrenMissing()
-                print("parentNode: {} , nodePair: {}, nodeNumber: {}".format(parentNode,nodePair,nodeNumber)) 
+                
                 buyDict[parentNodeNumber] = parentNode
 
         buyDict = {}
@@ -81,7 +81,7 @@ class Tree (models.Model):
             child1Value = currentNode.child1Value
             child2Value = currentNode.child2Value
             smallerChild = child1 if child1Value <= child2Value else child2   
-            print (smallerChild , "this is the smaller child")  
+            
 
             difference = abs(child1Value - child2Value)  
 
@@ -118,7 +118,7 @@ class Tree (models.Model):
                             id = id, 
                             user =user, 
                             number = nodeNumber)
-                        print("why is id always one???: ", newNode)
+                     
                            
                     if difference == 0:
                         buyDict[newNode.number] = newNode
@@ -281,10 +281,9 @@ class Node (models.Model):
             oldSet = Node.objects.filter(pk__in = newAndUpdatedIDList[:950])
             del newAndUpdatedIDList[:950]            
             oldSet.delete()
-            for node in createNodes[:950]:
-                print (node)
             
-            print(  "nodes about to be made")
+            
+            
             Node.objects.bulk_create(createNodes[:950]) 
             
             del createNodes[:950]
