@@ -73,6 +73,7 @@ class Tree (models.Model):
             if not tree.filter(number = currentNodeNumber).exists() and currentNodeNumber not in buyDict:
                 #pass
                 untilPay += 1
+                #move this logic onto the class
                 # this is broken
             #if node exists figure out which child branch is smaller
 
@@ -80,8 +81,9 @@ class Tree (models.Model):
             child2 = currentNode.child2
             child1Value = currentNode.child1Value
             child2Value = currentNode.child2Value
-            smallerChild = child1 if child1Value <= child2Value else child2   
-            
+            smallerChild = child1 if child1Value <= child2Value else child2  
+
+            childrenDict = {child1:child1Value, child2:child2Value}
 
             difference = abs(child1Value - child2Value)  
 
@@ -118,15 +120,39 @@ class Tree (models.Model):
                             id = id, 
                             user =user, 
                             number = nodeNumber)
-                     
+                    try: 
+                        parent = identifyParent(newNode.number, *childrenDict)
+                    except:
+                        parent = currentNodeNumber 
                            
                     if difference == 0:
-                        buyDict[newNode.number] = newNode
-                        if create == False:
-                            return newNode
-                        updateParents(newNode.number)
-                        amount -=1                        
-                        untilPay -= 1
+                        #if parent is not paid
+                        #get the right parent
+                        # if parent is paid : continue
+                        # 
+
+
+
+                        #cemu ovo preseravanje kad vec imamo child value?????????????
+                        #it could be in the tree
+                        # or it could not exist
+                        #am i overcomplicating?
+                        # maybe use a function that gets the node instead of copying the smae logic over and over again
+                        #if parent of child value < 31
+                        #ipak mi treba dictionary
+                        # plus jedan u dicitonary
+
+                        if  parent == currentNodeNumber or childrenDict[parent] < 31:
+                            try:
+                                childrenDict[parent] += 1
+                            except KeyError:
+                                pass
+                            buyDict[newNode.number] = newNode
+                            if create == False:
+                                return newNode
+                            updateParents(newNode.number)
+                            amount -=1                        
+                            untilPay -= 1
                         #add all parents here
                         #create fetchallparentesmethod???
 
@@ -135,16 +161,17 @@ class Tree (models.Model):
 
                     if difference >0 and childOf(smallerChild, nodeNumber):
                         
-                            difference -= 1 
-                            amount -=1                        
-                            untilPay -= 1
-                            buyDict[newNode.number] = newNode
-                            if create == False:
-                                return newNode
-                            updateParents(newNode.number)
-                            if difference == 0:
-                                #reset generator as we may have skipped a few nodes
-                                generator = nodeGenerator(currentNodeNumber)
+                        childrenDict[parent] += 1
+                        difference -= 1 
+                        amount -=1                        
+                        untilPay -= 1
+                        buyDict[newNode.number] = newNode
+                        if create == False:
+                            return newNode
+                        updateParents(newNode.number)
+                        if difference == 0:
+                            #reset generator as we may have skipped a few nodes
+                            generator = nodeGenerator(currentNodeNumber)
                         
 
 

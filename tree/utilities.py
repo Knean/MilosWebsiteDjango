@@ -147,3 +147,15 @@ def childOf(parent, child):
             
             return True
     return False
+
+def identifyParent(node, *args):
+    #which argument is the nodes parent
+    for parent in args:
+        if parent == node:
+            return parent
+    generator = parentGenerator(node)
+    while True:
+        node = next(generator)        
+        for parent in args:
+            if parent == node["parent"]:
+                return parent
