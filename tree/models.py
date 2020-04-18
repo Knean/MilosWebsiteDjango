@@ -20,7 +20,7 @@ class Tree (models.Model):
 
 
 
-    def buy(self,amount, startNode = None, user = User.objects.first(), create = True):
+    def buy(self,amount, startNode = None, user = 1, create = True):
         def updateParents(nodeNumber):
             for nodePair in parentGenerator(nodeNumber):
                
