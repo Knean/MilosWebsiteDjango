@@ -171,12 +171,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_WORKER_CONCURRENCY = 1
 
-import os
-import psycopg2
-
-DATABASE_URL = os.environ['DATABASE_URL']
-
-
-
 import dj_database_url
-DATABASES['default'].update( dj_database_url.config(conn_max_age=600))
+db_from_env = dj_database_url.config()
+DATABASES['default'].update(db_from_env)
+DATABASES['default']['CONN_MAX_AGE'] = 500
