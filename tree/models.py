@@ -118,7 +118,7 @@ class Tree (models.Model):
                         newNode = Node.create_object(
                             tree = self,
                             id = id, 
-                            user =user, 
+                            user =User.objects.get(id = user), 
                             number = nodeNumber)
                     try: 
                         parent = identifyParent(newNode.number, *childrenDict)
@@ -258,7 +258,7 @@ class Tree (models.Model):
                 #it has a user?
                 
                 tree = tree,
-                user = user, 
+                user =User.objects.get(id = user), 
                 number = number) 
             payoutOrder.append(newNode)
             amount -= 1

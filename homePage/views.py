@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from tree import models
+from tree.tasks import buy
 from tree.forms import BuyForm
 from tree.utilities import findParent
 from authentication.forms import AuthForm, RegForm
@@ -28,7 +29,8 @@ def createTreeNode(request):
     form = BuyForm(request.POST)
     if form.is_valid():
         amount = form.cleaned_data["amount"]
-    tree.buy(amount,1, user = request.user)    
+    #tree.buy(amount,1, user = request.user.id) 
+    buy.delay(amount = amount,user = request.user.id)    
     return redirect("home")
 
 def resetTree(request):

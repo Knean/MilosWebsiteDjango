@@ -133,11 +133,11 @@ function update() {
     var local = "http://127.0.0.1:8000/"
     var production = "https://limitless-wildwood-61701.herokuapp.com/"
     $.ajax({
-        url: production + "users/", success: function(result){
+        url: local + "users/", success: function(result){
       users = result
      }});
     $.ajax({
-        url: production + "nodes/", success: function(result){
+        url: local + "nodes/", success: function(result){
       data = result
       console.log(data, "this is the damn data")
       update()
