@@ -5,6 +5,7 @@ from .serializers import NodeSerializer, UserSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
+import json
 # Create your views here.
 @api_view(['GET'])
 def node_list(request):
@@ -16,7 +17,7 @@ def node_list(request):
         #serializer = NodeSerializer(nodes, many=True)
         tree = Tree.objects.first()
         #return Response(serializer.data)
-        return Response(tree.json_string)
+        return Response(json.loads(tree.json_string))
 
 
 @api_view(['GET'])
