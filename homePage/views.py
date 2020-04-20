@@ -35,6 +35,8 @@ def createTreeNode(request):
 
 def resetTree(request):
     models.Node.objects.all().delete()
-    models.Tree.objects.first().json_string = None
+    tree = models.Tree.objects.first()
+    tree.json_string = None
+    tree.save()
     return redirect("home")
 
