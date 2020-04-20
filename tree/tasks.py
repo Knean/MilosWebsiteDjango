@@ -1,8 +1,12 @@
 from celery import shared_task
-from .models import Tree
+from .models import Tree, Node
+from .serializers import NodeSerializer
 @shared_task
 def buy(amount, user):
     tree = Tree.objects.first()
     tree.buy(amount,1, user= user) 
-    tree.json_string = "aaaaaaaaa"
+
+    nodes = Node.objects.all()
+    serializer = NodeSerializer(nodes, many=True)
+    tree.json_string = serializer.data
     tree.save()
