@@ -130,7 +130,7 @@ function update() {
       
 
     }
-    var local = "http://127.0.0.1:8000/"
+    var local = "http://127.0.0.1:5000/"
     var production = "https://limitless-wildwood-61701.herokuapp.com/"
     $.ajax({
         url: production + "users/", success: function(result){

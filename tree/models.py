@@ -10,7 +10,7 @@ class Tree (models.Model):
 
 
     name = models.CharField("", max_length=50)
-
+    json_string = models.TextField("", null=True)
     class Meta:
         verbose_name = "Tree "
         verbose_name_plural = "Trees"

@@ -165,8 +165,7 @@ urlpatterns = [
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CELERY_BROKER_URL = os.environ.get('REDIS_URL') 
-
+CELERY_BROKER_URL = os.environ.get('REDIS_URL')
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_WORKER_CONCURRENCY = 1
