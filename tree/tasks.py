@@ -18,6 +18,6 @@ def buy(amount, user):
         "chat", 
         {
         "type": "chat.message", 
-        "text": tree.text_field,
+        "text": tree.json_string,
         }
     )
