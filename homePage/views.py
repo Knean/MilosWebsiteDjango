@@ -38,7 +38,7 @@ def createTreeNode(request):
 def resetTree(request):
     models.Node.objects.all().delete()
     tree = models.Tree.objects.first()
-    tree.json_string = None
+    tree.json_string = ""
     tree.save()
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
