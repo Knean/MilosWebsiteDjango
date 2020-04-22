@@ -5,6 +5,8 @@ from tree.tasks import buy
 from tree.forms import BuyForm
 from tree.utilities import findParent
 from authentication.forms import AuthForm, RegForm
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 import json
 # Create your views here.
 def displayHomePage(request, userForm = None, registrationForm = None):
@@ -38,5 +40,13 @@ def resetTree(request):
     tree = models.Tree.objects.first()
     tree.json_string = None
     tree.save()
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        "tree", 
+        {
+        "type": "tree.data", 
+        "text": tree.json_string,
+        }
+    )
     return redirect("home")
 
