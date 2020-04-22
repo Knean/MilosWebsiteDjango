@@ -11,7 +11,7 @@ $( window ).on( "load", function() {
   console.log("Connecting to " + ws_path);
   //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
   socket.onmessage = function(event) {
-    data = JSON.parse(event.data).text_data
+    data = JSON.parse(event.data)
     alert(`[message] Data received from server: ${data}`);
     update()
     };
