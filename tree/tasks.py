@@ -17,7 +17,7 @@ def buy(amount, user):
     async_to_sync(channel_layer.group_send)(
         "tree", 
         {
-        "type": "chat.message", 
+        "type": "tree.data", 
         "text": tree.json_string,
         }
     )
