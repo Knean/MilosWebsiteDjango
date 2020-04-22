@@ -222,7 +222,7 @@ class Tree (models.Model):
         #finds the first node if user has zero nodes so far
         if not nodesList.exists() and Node.objects.all().exists():
             easiestNodeInWholeTree = self.findNodeToPay(amount = 1)[0]
-            easiestOwnerInWholeTree = easiestNodeInWholeTree.user
+            easiestOwnerInWholeTree = easiestNodeInWholeTree.user.id
             
             #asignnode
             #reuse the buy logic
