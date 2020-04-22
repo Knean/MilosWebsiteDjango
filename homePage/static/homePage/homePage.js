@@ -7,7 +7,8 @@ var data = []
 $( window ).on( "load", function() {
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
   var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/"
-  var socket = new WebSocket(ws_path);
+  
+  var socket = new ReconnectingWebSocket(ws_path)
   console.log("Connecting to " + ws_path);
   //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
   socket.onmessage = function(event) {

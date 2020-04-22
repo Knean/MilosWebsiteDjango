@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4h56pfl5f0(nhg=k(f__t2x(e!i@-$$2#(!n8lmomc+wp4ptu0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['limitless-wildwood-61701.herokuapp.com', '127.0.0.1','localhost','http://127.0.0.1:8000/users/']
 
