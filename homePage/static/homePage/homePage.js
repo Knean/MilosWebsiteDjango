@@ -7,7 +7,7 @@ var data = []
 $( window ).on( "load", function() {
 
 
-  let socket = new WebSocket("wss://https://limitless-wildwood-61701.herokuapp.com/treeChannel");
+  let socket = new WebSocket("wss://www.limitless-wildwood-61701.herokuapp.com/treeChannel");
   socket.onmessage = function(event) {
     data = event.data
     alert(`[message] Data received from server: ${event.data}`);
