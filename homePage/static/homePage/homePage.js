@@ -5,9 +5,10 @@ var users = []
 d3 = window.d3
 var data = []
 $( window ).on( "load", function() {
+  var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+  var socket = new WebSocket(ws_scheme + '://' + window.location.host + "/treeChannel" + window.location.pathname);
 
-
-  let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
+  //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
   socket.onmessage = function(event) {
     data = event.data
     alert(`[message] Data received from server: ${event.data}`);

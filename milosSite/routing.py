@@ -4,7 +4,7 @@ from tree.consumers import TreeConsumer
 
 application = ProtocolTypeRouter({
        "websocket": URLRouter([
-        path("/treeChannel",TreeConsumer),
+        path("treeChannel",TreeConsumer),
       
     ]),
         
