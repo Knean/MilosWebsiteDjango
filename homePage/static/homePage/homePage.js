@@ -7,6 +7,12 @@ var data = []
 $( window ).on( "load", function() {
 
 
+  let socket = new WebSocket("ws://127.0.0.1:8000/offerChannel");
+  socket.onmessage = function(event) {
+    data = event.data
+    alert(`[message] Data received from server: ${event.data}`);
+    update()
+    };
 
     
 
