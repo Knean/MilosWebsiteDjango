@@ -17,7 +17,7 @@ def node_list(request):
         #serializer = NodeSerializer(nodes, many=True)
         tree = Tree.objects.first()
         #return Response(serializer.data)
-        return Response(json.loads(tree.json_string or 'null'))
+        return Response(json.loads(tree.json_string or '{}'))
 
 
 @api_view(['GET'])
