@@ -21,18 +21,19 @@ def displayHomePage(request, userForm = None, registrationForm = None):
     user = request.user
     
     return render(
-        request, 'homePage/homePage.html',
+        request, 'homePage/index.html',
         context ={"nodes":nodes, "form":form,"user":user, "userForm":userForm, "regForm":registrationForm})
 
 
 
 def createTreeNode(request):
+    print("node created")
     tree = models.Tree.objects.all().first()
     form = BuyForm(request.POST)
     if form.is_valid():
         amount = form.cleaned_data["amount"]
     #tree.buy(amount,1, user = request.user.id) 
-    buy.delay(amount = amount,user = request.user.id)    
+    buy(amount = amount,user = request.user.id)    
     return redirect("home")
 
 def resetTree(request):

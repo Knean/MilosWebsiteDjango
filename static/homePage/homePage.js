@@ -7,7 +7,7 @@ var data = []
 $( window ).on( "load", function() {
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
   var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/"
-  
+  console.log(ws_path, "socket path")
   var socket = new ReconnectingWebSocket(ws_path)
   console.log("Connecting to " + ws_path);
   //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
@@ -139,14 +139,14 @@ function update() {
       
 
     }
-    var local = "http://127.0.0.1:5000/"
+    var local = "http://127.0.0.1:8000/"
     var production = "https://limitless-wildwood-61701.herokuapp.com/"
     $.ajax({
-        url: production + "users/", success: function(result){
+        url: local + "users/", success: function(result){
       users = result
      }});
     $.ajax({
-        url: production + "nodes/", success: function(result){
+        url: local + "nodes/", success: function(result){
       data = result
       console.log(data, "this is the damn data")
       update()
