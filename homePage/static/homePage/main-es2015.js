@@ -503,7 +503,7 @@ class HomepageComponent {
         this.tree_service = tree_service;
         this.allTrees = [];
         this.index = 0;
-        this.loading = false;
+        this.loading = true;
         this.tabs = [
             {
                 selected: true,

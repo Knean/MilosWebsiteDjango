@@ -940,7 +940,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.tree_service = tree_service;
         this.allTrees = [];
         this.index = 0;
-        this.loading = false;
+        this.loading = true;
         this.tabs = [{
           selected: true,
           name: "First Tree"
