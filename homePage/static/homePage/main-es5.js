@@ -940,7 +940,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.tree_service = tree_service;
         this.allTrees = [];
         this.index = 0;
-        this.loading = true;
+        this.loading = false;
         this.tabs = [{
           selected: true,
           name: "First Tree"
@@ -983,7 +983,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
               console.log(_this7.tabs[index].name);
               _this7.tabs[index].selected = true;
-              _this7.loading = false;
+              _this7.loading = true;
             }, 0);
           } //this.loading= false;
 
@@ -1073,11 +1073,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.data_service.createConnection();
           this.data_service.tree_data.subscribe(function (result) {
             console.log(result);
-            _this9.loading = true;
             _this9.allTrees = result; //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
 
             setTimeout(function () {
+              _this9.loading = true;
               d3.selectAll("svg").remove();
               result.forEach(function (tree, index) {
                 return _this9.renderTree(_this9.allTrees[index], index);

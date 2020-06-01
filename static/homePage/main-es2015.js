@@ -543,7 +543,7 @@ class HomepageComponent {
                 this.tabs.forEach(tab => tab.selected = false);
                 console.log(this.tabs[index].name);
                 this.tabs[index].selected = true;
-                this.loading = false;
+                this.loading = true;
             }, 0);
         }
         //this.loading= false;
@@ -606,11 +606,11 @@ class HomepageComponent {
         this.data_service.createConnection();
         this.data_service.tree_data.subscribe((result) => {
             console.log(result);
-            this.loading = true;
             this.allTrees = result;
             //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
             setTimeout(() => {
+                this.loading = true;
                 d3.selectAll("svg").remove();
                 result.forEach((tree, index) => this.renderTree(this.allTrees[index], index));
                 this.loading = false;
