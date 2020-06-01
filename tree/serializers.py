@@ -16,9 +16,9 @@ class NodeSerializer(serializers.ModelSerializer):
         model = Node
         fields = ['number', 'userName', 'child1', 'child1Value', 'child2', 'child2Value','childrenMissing','parent']
 class UserSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField('userMethod')
+    #name = serializers.SerializerMethodField('userMethod')
     def userMethod(self, obj):
         return obj.username
     class Meta:
         model = get_user_model()
-        fields = ['name']
+        fields = ['username']
