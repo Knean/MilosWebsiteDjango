@@ -349,16 +349,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DataReceptionService", function() { return DataReceptionService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
+/* harmony import */ var _authentication_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./authentication.service */ "./src/app/authentication.service.ts");
+
 
 
 
 class DataReceptionService {
-    constructor() {
+    constructor(auth) {
+        this.auth = auth;
         this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
     }
     createConnection() {
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var ws_path = ws_scheme + '://' + "127.0.0.1:8000" + "/treeChannel/";
+        var ws_path = ws_scheme + '://' + this.auth.getHost() + "treeChannel/";
         var socket = new ReconnectingWebSocket(ws_path);
         console.log("Connecting to " + ws_path);
         //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
@@ -370,14 +373,14 @@ class DataReceptionService {
         };
     }
 }
-DataReceptionService.ɵfac = function DataReceptionService_Factory(t) { return new (t || DataReceptionService)(); };
+DataReceptionService.ɵfac = function DataReceptionService_Factory(t) { return new (t || DataReceptionService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"])); };
 DataReceptionService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: DataReceptionService, factory: DataReceptionService.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](DataReceptionService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
                 providedIn: 'root'
             }]
-    }], function () { return []; }, null); })();
+    }], function () { return [{ type: _authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"] }]; }, null); })();
 
 
 /***/ }),

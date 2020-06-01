@@ -594,11 +594,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
     /*! rxjs */
     "./node_modules/rxjs/_esm2015/index.js");
+    /* harmony import */
+
+
+    var _authentication_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    /*! ./authentication.service */
+    "./src/app/authentication.service.ts");
 
     var DataReceptionService = /*#__PURE__*/function () {
-      function DataReceptionService() {
+      function DataReceptionService(auth) {
         _classCallCheck(this, DataReceptionService);
 
+        this.auth = auth;
         this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
       }
 
@@ -608,7 +615,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this6 = this;
 
           var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-          var ws_path = ws_scheme + '://' + "127.0.0.1:8000" + "/treeChannel/";
+          var ws_path = ws_scheme + '://' + this.auth.getHost() + "treeChannel/";
           var socket = new ReconnectingWebSocket(ws_path);
           console.log("Connecting to " + ws_path); //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
 
@@ -626,7 +633,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }();
 
     DataReceptionService.ɵfac = function DataReceptionService_Factory(t) {
-      return new (t || DataReceptionService)();
+      return new (t || DataReceptionService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"]));
     };
 
     DataReceptionService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
@@ -643,7 +650,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           providedIn: 'root'
         }]
       }], function () {
-        return [];
+        return [{
+          type: _authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"]
+        }];
       }, null);
     })();
     /***/
