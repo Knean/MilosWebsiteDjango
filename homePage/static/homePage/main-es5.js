@@ -614,8 +614,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function createConnection() {
           var _this6 = this;
 
-          var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-          var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/";
+          /*     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+              var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/" */
+          var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/";
           var socket = new ReconnectingWebSocket(ws_path);
           console.log("Connecting to " + ws_path); //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
 
@@ -972,21 +973,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "selectTab",
         value: function selectTab(index) {
-          var _this7 = this;
-
-          if (!this.loading) {
-            this.loading = true;
-            setTimeout(function () {
-              _this7.tabs.forEach(function (tab) {
-                return tab.selected = false;
-              });
-
-              console.log(_this7.tabs[index].name);
-              _this7.tabs[index].selected = true;
-              _this7.loading = true;
-            }, 0);
-          } //this.loading= false;
-
+          this.loading = true;
+          this.tabs.forEach(function (tab) {
+            return tab.selected = false;
+          });
+          console.log(this.tabs[index].name);
+          this.tabs[index].selected = true;
+          this.loading = true; //this.loading= false;
         }
       }, {
         key: "renderTree",
@@ -1054,35 +1047,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this8 = this;
+          var _this7 = this;
 
           //this.auth.user.next({username: "cumLord"})
           this.auth.get_user();
           this.auth.user.subscribe(function (result) {
-            _this8.user = result;
+            _this7.user = result;
           });
           this.auth.userList.subscribe(function (dataResponse) {
-            _this8.users = dataResponse;
+            _this7.users = dataResponse;
           });
         }
       }, {
         key: "ngAfterViewInit",
         value: function ngAfterViewInit() {
-          var _this9 = this;
+          var _this8 = this;
 
           this.data_service.createConnection();
           this.data_service.tree_data.subscribe(function (result) {
             console.log(result);
-            _this9.allTrees = result; //this.renderTree(this.allTrees[this.index])
+            _this8.allTrees = result; //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
 
             setTimeout(function () {
-              _this9.loading = true;
+              _this8.loading = true;
               d3.selectAll("svg").remove();
               result.forEach(function (tree, index) {
-                return _this9.renderTree(_this9.allTrees[index], index);
+                return _this8.renderTree(_this8.allTrees[index], index);
               });
-              _this9.loading = false;
+              _this8.loading = false;
             }, 200);
             console.log("falsed");
           });
@@ -2062,6 +2055,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function generateTree(users, data, width, height) {
           //add the group element that will contain all the drawings of the graph
           //graph = svg.append('g').attr('transform', 'translate(50, 50)');
+          users = users.sort(function (a, b) {
+            return a.username.localeCompare(b.username);
+          });
+          console.log(users, "users ");
           var graph = d3.create('svg:g');
           var scale;
           scale = d3.scaleOrdinal(d3["schemeSet3"]).domain(users.map(function (element) {
@@ -2213,12 +2210,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(TreeComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this10 = this;
+          var _this9 = this;
 
           console.log(this.data, " its the mofoking data");
           this.auth.userList.subscribe(function (dataResponse) {
-            _this10.users = dataResponse;
-            console.log(_this10.users, "this is the users data form subscription");
+            _this9.users = dataResponse;
+            console.log(_this9.users, "this is the users data form subscription");
           });
           this.name = this.data.length.toString();
         }

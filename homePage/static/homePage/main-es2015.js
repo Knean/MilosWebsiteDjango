@@ -360,8 +360,9 @@ class DataReceptionService {
         this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
     }
     createConnection() {
-        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/";
+        /*     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/" */
+        var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/";
         var socket = new ReconnectingWebSocket(ws_path);
         console.log("Connecting to " + ws_path);
         //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
@@ -537,15 +538,11 @@ class HomepageComponent {
              console.log("falsed") */
     }
     selectTab(index) {
-        if (!this.loading) {
-            this.loading = true;
-            setTimeout(() => {
-                this.tabs.forEach(tab => tab.selected = false);
-                console.log(this.tabs[index].name);
-                this.tabs[index].selected = true;
-                this.loading = true;
-            }, 0);
-        }
+        this.loading = true;
+        this.tabs.forEach(tab => tab.selected = false);
+        console.log(this.tabs[index].name);
+        this.tabs[index].selected = true;
+        this.loading = true;
         //this.loading= false;
     }
     renderTree(data, index) {
@@ -1067,6 +1064,8 @@ class TreeGeneratorService {
     generateTree(users, data, width, height) {
         //add the group element that will contain all the drawings of the graph
         //graph = svg.append('g').attr('transform', 'translate(50, 50)');
+        users = users.sort((a, b) => a.username.localeCompare(b.username));
+        console.log(users, "users ");
         var graph = d3.create('svg:g');
         var scale;
         scale = d3.scaleOrdinal(d3["schemeSet3"])
