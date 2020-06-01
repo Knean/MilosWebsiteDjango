@@ -42,6 +42,6 @@ def buy(request):
     amount = int(request.data.get("amount"))        
     #tree.buy(amount,1, user = request.user.id) 
     print(request.user.id, " is buying: ", amount)  
-    tasks.buy(amount = amount,user = request.user.id)
+    tasks.buy.delay(amount = amount,user = request.user.id)
       
     return Response(data= None, status = 200)  

@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4h56pfl5f0(nhg=k(f__t2x(e!i@-$$2#(!n8lmomc+wp4ptu0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['limitless-wildwood-61701.herokuapp.com', '127.0.0.1','localhost','http://127.0.0.1:8000/users/']
 
@@ -172,10 +172,10 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_WORKER_CONCURRENCY = 1
 
-#import dj_database_url
-#db_from_env = dj_database_url.config()
-#DATABASES['default'].update(db_from_env)
-#DATABASES['default']['CONN_MAX_AGE'] = 500
+import dj_database_url
+db_from_env = dj_database_url.config()
+DATABASES['default'].update(db_from_env)
+DATABASES['default']['CONN_MAX_AGE'] = 500
 
 ASGI_APPLICATION = "milosSite.routing.application"
 
