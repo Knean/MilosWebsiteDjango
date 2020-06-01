@@ -360,9 +360,9 @@ class DataReceptionService {
         this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
     }
     createConnection() {
-        /*     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-            var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/" */
-        var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/";
+        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        var ws_path = ws_scheme + '://' + window.location.host + "/treeChannel/";
+        /*  var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/" */
         var socket = new ReconnectingWebSocket(ws_path);
         console.log("Connecting to " + ws_path);
         //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
