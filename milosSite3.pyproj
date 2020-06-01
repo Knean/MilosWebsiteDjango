@@ -1,0 +1,529 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{10bb6fa3-7358-42c3-978d-36dec8d02fd4}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>manage.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{5F0BE9CA-D677-4A4D-8806-6076C0FAAD37};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Django launcher</LaunchProvider>
+    <InterpreterId />
+    <WebBrowserUrl>http://127.0.0.1:</WebBrowserUrl>
+    <DjangoSettingsModule>milosSite.settings</DjangoSettingsModule>
+    <WebBrowserPort>8000</WebBrowserPort>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="homePage\static\homePage\assets\reconnectingSocket\reconnecting-websocket.min.js" />
+    <Content Include="homePage\static\homePage\favicon.ico" />
+    <Content Include="homePage\static\homePage\main-es2015.js" />
+    <Content Include="homePage\static\homePage\main-es5.js" />
+    <Content Include="homePage\static\homePage\polyfills-es2015.js" />
+    <Content Include="homePage\static\homePage\polyfills-es5.js" />
+    <Content Include="homePage\static\homePage\runtime-es2015.js" />
+    <Content Include="homePage\static\homePage\runtime-es5.js" />
+    <Content Include="homePage\static\homePage\scripts.js" />
+    <Content Include="homePage\static\homePage\styles-es2015.js" />
+    <Content Include="homePage\static\homePage\styles-es5.js" />
+    <Content Include="homePage\static\homePage\vendor-es2015.js" />
+    <Content Include="homePage\static\homePage\vendor-es5.js" />
+    <Content Include="homePage\templates\homePage\index.html" />
+    <Content Include="obj\Debug\milosSite1.pyproj.FileListAbsolute.txt" />
+    <Content Include="requirements.txt" />
+    <Content Include="runtime.txt" />
+    <Content Include="static\admin\css\autocomplete.781713f30664.css" />
+    <Content Include="static\admin\css\autocomplete.css" />
+    <Content Include="static\admin\css\base.ae33e6383baa.css" />
+    <Content Include="static\admin\css\base.css" />
+    <Content Include="static\admin\css\changelists.cfe316f81936.css" />
+    <Content Include="static\admin\css\changelists.css" />
+    <Content Include="static\admin\css\dashboard.7ac78187c567.css" />
+    <Content Include="static\admin\css\dashboard.css" />
+    <Content Include="static\admin\css\fonts.168bab448fee.css" />
+    <Content Include="static\admin\css\fonts.css" />
+    <Content Include="static\admin\css\forms.9f1ffc442e9a.css" />
+    <Content Include="static\admin\css\forms.css" />
+    <Content Include="static\admin\css\login.252ffabd6548.css" />
+    <Content Include="static\admin\css\login.css" />
+    <Content Include="static\admin\css\responsive.755ce0b07393.css" />
+    <Content Include="static\admin\css\responsive.css" />
+    <Content Include="static\admin\css\responsive_rtl.51c7445ceeff.css" />
+    <Content Include="static\admin\css\responsive_rtl.css" />
+    <Content Include="static\admin\css\rtl.30f903442dc5.css" />
+    <Content Include="static\admin\css\rtl.css" />
+    <Content Include="static\admin\css\vendor\select2\select2.css" />
+    <Content Include="static\admin\css\vendor\select2\select2.fd9fe49d3d91.css" />
+    <Content Include="static\admin\css\vendor\select2\select2.min.af22a7e2bfec.css" />
+    <Content Include="static\admin\css\vendor\select2\select2.min.css" />
+    <Content Include="static\admin\css\widgets.8874c301e7bc.css" />
+    <Content Include="static\admin\css\widgets.css" />
+    <Content Include="static\admin\fonts\LICENSE.d273d63619c9.txt" />
+    <Content Include="static\admin\fonts\LICENSE.txt" />
+    <Content Include="static\admin\fonts\README.ab99e6b541ea.txt" />
+    <Content Include="static\admin\fonts\README.txt" />
+    <Content Include="static\admin\img\calendar-icons.39b290681a8b.svg" />
+    <Content Include="static\admin\img\calendar-icons.svg" />
+    <Content Include="static\admin\img\gis\move_vertex_off.7a23bf31ef8a.svg" />
+    <Content Include="static\admin\img\gis\move_vertex_off.svg" />
+    <Content Include="static\admin\img\gis\move_vertex_on.0047eba25b67.svg" />
+    <Content Include="static\admin\img\gis\move_vertex_on.svg" />
+    <Content Include="static\admin\img\icon-addlink.d519b3bab011.svg" />
+    <Content Include="static\admin\img\icon-addlink.svg" />
+    <Content Include="static\admin\img\icon-alert.034cc7d8a67f.svg" />
+    <Content Include="static\admin\img\icon-alert.svg" />
+    <Content Include="static\admin\img\icon-calendar.ac7aea671bea.svg" />
+    <Content Include="static\admin\img\icon-calendar.svg" />
+    <Content Include="static\admin\img\icon-changelink.18d2fd706348.svg" />
+    <Content Include="static\admin\img\icon-changelink.svg" />
+    <Content Include="static\admin\img\icon-clock.e1d4dfac3f2b.svg" />
+    <Content Include="static\admin\img\icon-clock.svg" />
+    <Content Include="static\admin\img\icon-deletelink.564ef9dc3854.svg" />
+    <Content Include="static\admin\img\icon-deletelink.svg" />
+    <Content Include="static\admin\img\icon-no.439e821418cd.svg" />
+    <Content Include="static\admin\img\icon-no.svg" />
+    <Content Include="static\admin\img\icon-unknown-alt.81536e128bb6.svg" />
+    <Content Include="static\admin\img\icon-unknown-alt.svg" />
+    <Content Include="static\admin\img\icon-unknown.a18cb4398978.svg" />
+    <Content Include="static\admin\img\icon-unknown.svg" />
+    <Content Include="static\admin\img\icon-viewlink.41eb31f7826e.svg" />
+    <Content Include="static\admin\img\icon-viewlink.svg" />
+    <Content Include="static\admin\img\icon-yes.d2f9f035226a.svg" />
+    <Content Include="static\admin\img\icon-yes.svg" />
+    <Content Include="static\admin\img\inline-delete.fec1b761f254.svg" />
+    <Content Include="static\admin\img\inline-delete.svg" />
+    <Content Include="static\admin\img\README.a70711a38d87.txt" />
+    <Content Include="static\admin\img\README.txt" />
+    <Content Include="static\admin\img\search.7cf54ff789c6.svg" />
+    <Content Include="static\admin\img\search.svg" />
+    <Content Include="static\admin\img\selector-icons.b4555096cea2.svg" />
+    <Content Include="static\admin\img\selector-icons.svg" />
+    <Content Include="static\admin\img\sorting-icons.3a097b59f104.svg" />
+    <Content Include="static\admin\img\sorting-icons.svg" />
+    <Content Include="static\admin\img\tooltag-add.e59d620a9742.svg" />
+    <Content Include="static\admin\img\tooltag-add.svg" />
+    <Content Include="static\admin\img\tooltag-arrowright.bbfb788a849e.svg" />
+    <Content Include="static\admin\img\tooltag-arrowright.svg" />
+    <Content Include="static\admin\js\actions.8d83e3af0fbd.js" />
+    <Content Include="static\admin\js\actions.js" />
+    <Content Include="static\admin\js\actions.min.5fa8cb0403f1.js" />
+    <Content Include="static\admin\js\actions.min.js" />
+    <Content Include="static\admin\js\admin\DateTimeShortcuts.a9c6d180860b.js" />
+    <Content Include="static\admin\js\admin\DateTimeShortcuts.js" />
+    <Content Include="static\admin\js\admin\RelatedObjectLookups.ea0683bea064.js" />
+    <Content Include="static\admin\js\admin\RelatedObjectLookups.js" />
+    <Content Include="static\admin\js\autocomplete.cfd2c4dc8981.js" />
+    <Content Include="static\admin\js\autocomplete.js" />
+    <Content Include="static\admin\js\calendar.aae57adab5f6.js" />
+    <Content Include="static\admin\js\calendar.js" />
+    <Content Include="static\admin\js\cancel.a2c3149a1c5e.js" />
+    <Content Include="static\admin\js\cancel.js" />
+    <Content Include="static\admin\js\change_form.9e85003a1a38.js" />
+    <Content Include="static\admin\js\change_form.js" />
+    <Content Include="static\admin\js\collapse.c5b851e91226.js" />
+    <Content Include="static\admin\js\collapse.js" />
+    <Content Include="static\admin\js\collapse.min.44dfdb427845.js" />
+    <Content Include="static\admin\js\collapse.min.js" />
+    <Content Include="static\admin\js\core.ea39b3bd34c3.js" />
+    <Content Include="static\admin\js\core.js" />
+    <Content Include="static\admin\js\inlines.12d1af430335.js" />
+    <Content Include="static\admin\js\inlines.js" />
+    <Content Include="static\admin\js\inlines.min.6d6c2416646e.js" />
+    <Content Include="static\admin\js\inlines.min.js" />
+    <Content Include="static\admin\js\jquery.init.95b62fa19378.js" />
+    <Content Include="static\admin\js\jquery.init.js" />
+    <Content Include="static\admin\js\popup_response.6ce3197f8fc8.js" />
+    <Content Include="static\admin\js\popup_response.js" />
+    <Content Include="static\admin\js\prepopulate.2f90da7170ec.js" />
+    <Content Include="static\admin\js\prepopulate.js" />
+    <Content Include="static\admin\js\prepopulate.min.85fd5e0fb706.js" />
+    <Content Include="static\admin\js\prepopulate.min.js" />
+    <Content Include="static\admin\js\prepopulate_init.0d3b53c37074.js" />
+    <Content Include="static\admin\js\prepopulate_init.js" />
+    <Content Include="static\admin\js\SelectBox.99d0cfd2e80c.js" />
+    <Content Include="static\admin\js\SelectBox.js" />
+    <Content Include="static\admin\js\SelectFilter2.c26733924aea.js" />
+    <Content Include="static\admin\js\SelectFilter2.js" />
+    <Content Include="static\admin\js\urlify.67bae52223e0.js" />
+    <Content Include="static\admin\js\urlify.js" />
+    <Content Include="static\admin\js\vendor\jquery\jquery.11c05eb286ed.js" />
+    <Content Include="static\admin\js\vendor\jquery\jquery.js" />
+    <Content Include="static\admin\js\vendor\jquery\jquery.min.220afd743d9e.js" />
+    <Content Include="static\admin\js\vendor\jquery\jquery.min.js" />
+    <Content Include="static\admin\js\vendor\jquery\LICENSE.75308107741f.txt" />
+    <Content Include="static\admin\js\vendor\jquery\LICENSE.txt" />
+    <Content Include="static\admin\js\vendor\select2\i18n\af.c4a5cbd6a23f.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\af.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ar.7dcfd5775174.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ar.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\az.1804c238d269.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\az.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\bg.096f4410173b.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\bg.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\bn.b33721dc9b8a.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\bn.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\bs.debce43cfca2.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\bs.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ca.60f20182ff18.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ca.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\cs.edd7167cdcb6.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\cs.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\da.6bbc262044b3.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\da.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\de.630e81c65a7b.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\de.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\dsb.9c2742bfc55a.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\dsb.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\el.01c46bf8c8b3.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\el.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\en.aed9bad15375.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\en.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\es.8b21ebdb01ee.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\es.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\et.32b0b17ba1a9.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\et.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\eu.6c45eaf416fe.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\eu.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\fa.1738b003dd26.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\fa.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\fi.2858f3167855.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\fi.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\fr.6129248732b9.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\fr.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\gl.e2766036e78a.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\gl.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\he.4d933538516a.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\he.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hi.f81e979ec25f.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hi.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hr.68583e607f1e.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hr.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hsb.50caaee90a0d.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hsb.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hu.9edad4c24fd0.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hu.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hy.4c655f53f4e1.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\hy.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\id.322604a430a5.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\id.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\is.a8a13c9122d7.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\is.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\it.110a0fa84968.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\it.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ja.442146837f55.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ja.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ka.8ea0684cc301.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ka.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\km.8c337905305d.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\km.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ko.82358a9b6840.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ko.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\lt.2c390a6bf650.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\lt.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\lv.30bfb7fc3b63.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\lv.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\mk.92f1d29581b7.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\mk.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ms.ade6aba46542.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ms.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\nb.e535138ca26b.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\nb.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ne.f61bf00bc3fe.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ne.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\nl.674c0d3da68d.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\nl.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\pl.a10ee9248c07.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\pl.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ps.de1a40c46c09.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ps.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\pt-BR.455adefc2984.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\pt-BR.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\pt.5b4ec8cb5b23.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\pt.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ro.ea7e3b822b06.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ro.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ru.962f048c22f2.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\ru.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sk.34019208b835.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sk.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sl.a5e262c643f2.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sl.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sq.abf2d34b255a.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sq.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sr-Cyrl.116365a2de65.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sr-Cyrl.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sr.c9f16b9e0f93.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sr.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sv.725800c5e8fc.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\sv.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\th.b013804dae9c.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\th.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\tk.5042dc8eca8e.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\tk.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\tr.dc697d893beb.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\tr.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\uk.e05ad5df6258.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\uk.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\vi.0a60056920fc.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\vi.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\zh-CN.bde34fa3f064.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\zh-CN.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\zh-TW.e727260f7094.js" />
+    <Content Include="static\admin\js\vendor\select2\i18n\zh-TW.js" />
+    <Content Include="static\admin\js\vendor\select2\select2.full.d379d5235584.js" />
+    <Content Include="static\admin\js\vendor\select2\select2.full.js" />
+    <Content Include="static\admin\js\vendor\select2\select2.full.min.68e8d8f673b7.js" />
+    <Content Include="static\admin\js\vendor\select2\select2.full.min.js" />
+    <Content Include="static\admin\js\vendor\xregexp\LICENSE.d64cecf4f157.txt" />
+    <Content Include="static\admin\js\vendor\xregexp\LICENSE.txt" />
+    <Content Include="static\admin\js\vendor\xregexp\xregexp.1865b1cf5085.js" />
+    <Content Include="static\admin\js\vendor\xregexp\xregexp.js" />
+    <Content Include="static\admin\js\vendor\xregexp\xregexp.min.c95393b8ca4d.js" />
+    <Content Include="static\admin\js\vendor\xregexp\xregexp.min.js" />
+    <Content Include="static\django_extensions\css\jquery.autocomplete.1a774d452e48.css" />
+    <Content Include="static\django_extensions\css\jquery.autocomplete.css" />
+    <Content Include="static\django_extensions\img\indicator.03ce3dcc84af.gif" />
+    <Content Include="static\django_extensions\img\indicator.gif" />
+    <Content Include="static\django_extensions\js\jquery.ajaxQueue.ac504621bdd8.js" />
+    <Content Include="static\django_extensions\js\jquery.ajaxQueue.js" />
+    <Content Include="static\django_extensions\js\jquery.autocomplete.26e55daaf7c5.js" />
+    <Content Include="static\django_extensions\js\jquery.autocomplete.js" />
+    <Content Include="static\django_extensions\js\jquery.bgiframe.a9cca145411c.js" />
+    <Content Include="static\django_extensions\js\jquery.bgiframe.js" />
+    <Content Include="static\homePage\assets\reconnectingSocket\reconnecting-websocket.min.9889bcba9f7d.js" />
+    <Content Include="static\homePage\assets\reconnectingSocket\reconnecting-websocket.min.js" />
+    <Content Include="static\homePage\favicon.1fbdf735a0dd.ico" />
+    <Content Include="static\homePage\favicon.ico" />
+    <Content Include="static\homePage\homePage.06b0be2da628.js" />
+    <Content Include="static\homePage\homePage.11b58fc2e68a.js" />
+    <Content Include="static\homePage\homePage.7bc8a90cd544.js" />
+    <Content Include="static\homePage\homePage.bbc488d20f04.js" />
+    <Content Include="static\homePage\homePage.js" />
+    <Content Include="static\homePage\main-es2015.0b662a4827ff.js" />
+    <Content Include="static\homePage\main-es2015.0b7cd9889837.js" />
+    <Content Include="static\homePage\main-es2015.18f6c97d39ec.js" />
+    <Content Include="static\homePage\main-es2015.65661ef873eb.js" />
+    <Content Include="static\homePage\main-es2015.81575153a4d7.js" />
+    <Content Include="static\homePage\main-es2015.d4362ee56d9e.js" />
+    <Content Include="static\homePage\main-es2015.d83569ca749f.js" />
+    <Content Include="static\homePage\main-es2015.js" />
+    <Content Include="static\homePage\main-es5.2e1e0da3aa52.js" />
+    <Content Include="static\homePage\main-es5.339e4908a247.js" />
+    <Content Include="static\homePage\main-es5.61ab245a70c6.js" />
+    <Content Include="static\homePage\main-es5.6f83a628323a.js" />
+    <Content Include="static\homePage\main-es5.813bb98332fe.js" />
+    <Content Include="static\homePage\main-es5.d091230ae573.js" />
+    <Content Include="static\homePage\main-es5.ea0ae51eccbb.js" />
+    <Content Include="static\homePage\main-es5.js" />
+    <Content Include="static\homePage\polyfills-es2015.52911807614f.js" />
+    <Content Include="static\homePage\polyfills-es2015.js" />
+    <Content Include="static\homePage\polyfills-es5.c9cd2df6286a.js" />
+    <Content Include="static\homePage\polyfills-es5.js" />
+    <Content Include="static\homePage\reconnecting-websocket.min.8fa5d3a696c9.js" />
+    <Content Include="static\homePage\reconnecting-websocket.min.js" />
+    <Content Include="static\homePage\runtime-es2015.aed1e2d27966.js" />
+    <Content Include="static\homePage\runtime-es2015.js" />
+    <Content Include="static\homePage\runtime-es5.43d8a96b1141.js" />
+    <Content Include="static\homePage\runtime-es5.js" />
+    <Content Include="static\homePage\scripts.c4a31e29b92f.js" />
+    <Content Include="static\homePage\scripts.js" />
+    <Content Include="static\homePage\styles-es2015.83bb3cbecc1c.js" />
+    <Content Include="static\homePage\styles-es2015.js" />
+    <Content Include="static\homePage\styles-es5.fa944e7f2c0e.js" />
+    <Content Include="static\homePage\styles-es5.js" />
+    <Content Include="static\homePage\vendor-es2015.6a5a6cce9369.js" />
+    <Content Include="static\homePage\vendor-es2015.74e0877cb13a.js" />
+    <Content Include="static\homePage\vendor-es2015.js" />
+    <Content Include="static\homePage\vendor-es5.0c1f27300f2b.js" />
+    <Content Include="static\homePage\vendor-es5.8922ae4d9d50.js" />
+    <Content Include="static\homePage\vendor-es5.js" />
+    <Content Include="static\rest_framework\css\bootstrap-theme.min.66b84a04375e.css" />
+    <Content Include="static\rest_framework\css\bootstrap-theme.min.css" />
+    <Content Include="static\rest_framework\css\bootstrap-tweaks.46ed116b0edd.css" />
+    <Content Include="static\rest_framework\css\bootstrap-tweaks.css" />
+    <Content Include="static\rest_framework\css\bootstrap.min.77017a69879a.css" />
+    <Content Include="static\rest_framework\css\bootstrap.min.css" />
+    <Content Include="static\rest_framework\css\default.8d5591a6aabc.css" />
+    <Content Include="static\rest_framework\css\default.css" />
+    <Content Include="static\rest_framework\css\font-awesome-4.0.3.c1e1ea213abf.css" />
+    <Content Include="static\rest_framework\css\font-awesome-4.0.3.css" />
+    <Content Include="static\rest_framework\css\prettify.a987f72342ee.css" />
+    <Content Include="static\rest_framework\css\prettify.css" />
+    <Content Include="static\rest_framework\docs\css\base.3208b6cc4466.css" />
+    <Content Include="static\rest_framework\docs\css\base.css" />
+    <Content Include="static\rest_framework\docs\css\highlight.css" />
+    <Content Include="static\rest_framework\docs\css\highlight.e0e4d973c6d7.css" />
+    <Content Include="static\rest_framework\docs\css\jquery.json-view.min.a2e6beeb6710.css" />
+    <Content Include="static\rest_framework\docs\css\jquery.json-view.min.css" />
+    <Content Include="static\rest_framework\docs\img\favicon.5195b4d0f3eb.ico" />
+    <Content Include="static\rest_framework\docs\img\favicon.ico" />
+    <Content Include="static\rest_framework\docs\img\grid.a4b938cf382b.png" />
+    <Content Include="static\rest_framework\docs\img\grid.png" />
+    <Content Include="static\rest_framework\docs\js\api.c9743eab7a4f.js" />
+    <Content Include="static\rest_framework\docs\js\api.js" />
+    <Content Include="static\rest_framework\docs\js\highlight.pack.479b5f21dcba.js" />
+    <Content Include="static\rest_framework\docs\js\highlight.pack.js" />
+    <Content Include="static\rest_framework\docs\js\jquery.json-view.min.b7c2d6981377.js" />
+    <Content Include="static\rest_framework\docs\js\jquery.json-view.min.js" />
+    <Content Include="static\rest_framework\fonts\fontawesome-webfont.83e37a11f9d7.svg" />
+    <Content Include="static\rest_framework\fonts\fontawesome-webfont.svg" />
+    <Content Include="static\rest_framework\fonts\glyphicons-halflings-regular.08eda92397ae.svg" />
+    <Content Include="static\rest_framework\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="static\rest_framework\img\glyphicons-halflings-white.9bbc6e960299.png" />
+    <Content Include="static\rest_framework\img\glyphicons-halflings-white.png" />
+    <Content Include="static\rest_framework\img\glyphicons-halflings.90233c9067e9.png" />
+    <Content Include="static\rest_framework\img\glyphicons-halflings.png" />
+    <Content Include="static\rest_framework\img\grid.a4b938cf382b.png" />
+    <Content Include="static\rest_framework\img\grid.png" />
+    <Content Include="static\rest_framework\js\ajax-form.0ea6e6052ab5.js" />
+    <Content Include="static\rest_framework\js\ajax-form.js" />
+    <Content Include="static\rest_framework\js\bootstrap.min.2f34b630ffe3.js" />
+    <Content Include="static\rest_framework\js\bootstrap.min.js" />
+    <Content Include="static\rest_framework\js\coreapi-0.1.1.8851fb9336c9.js" />
+    <Content Include="static\rest_framework\js\coreapi-0.1.1.js" />
+    <Content Include="static\rest_framework\js\csrf.969930007329.js" />
+    <Content Include="static\rest_framework\js\csrf.js" />
+    <Content Include="static\rest_framework\js\default.5b08897dbdc3.js" />
+    <Content Include="static\rest_framework\js\default.js" />
+    <Content Include="static\rest_framework\js\jquery-3.4.1.min.220afd743d9e.js" />
+    <Content Include="static\rest_framework\js\jquery-3.4.1.min.js" />
+    <Content Include="static\rest_framework\js\prettify-min.709bfcc456c6.js" />
+    <Content Include="static\rest_framework\js\prettify-min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="authentication\admin.py" />
+    <Compile Include="authentication\apps.py" />
+    <Compile Include="authentication\forms.py" />
+    <Compile Include="authentication\migrations\__init__.py" />
+    <Compile Include="authentication\models.py" />
+    <Compile Include="authentication\serializers.py" />
+    <Compile Include="authentication\tests.py" />
+    <Compile Include="authentication\urls.py" />
+    <Compile Include="authentication\views.py" />
+    <Compile Include="authentication\__init__.py" />
+    <Compile Include="bin\wfastcgi.py" />
+    <Compile Include="homePage\admin.py" />
+    <Compile Include="homePage\apps.py" />
+    <Compile Include="homePage\migrations\__init__.py" />
+    <Compile Include="homePage\models.py" />
+    <Compile Include="homePage\tests.py" />
+    <Compile Include="homePage\urls.py" />
+    <Compile Include="homePage\views.py" />
+    <Compile Include="homePage\__init__.py" />
+    <Compile Include="manage.py" />
+    <Compile Include="milosSite\asgi.py" />
+    <Compile Include="milosSite\celery.py" />
+    <Compile Include="milosSite\routing.py" />
+    <Compile Include="milosSite\settings.py" />
+    <Compile Include="milosSite\urls.py" />
+    <Compile Include="milosSite\wsgi.py" />
+    <Compile Include="milosSite\__init__.py" />
+    <Compile Include="tree\admin.py" />
+    <Compile Include="tree\apps.py" />
+    <Compile Include="tree\BuyObject.py" />
+    <Compile Include="tree\consumers.py" />
+    <Compile Include="tree\forms.py" />
+    <Compile Include="tree\migrations\0001_initial.py" />
+    <Compile Include="tree\migrations\0002_tree_json_string.py" />
+    <Compile Include="tree\migrations\0003_auto_20200527_0043.py" />
+    <Compile Include="tree\migrations\__init__.py" />
+    <Compile Include="tree\models.py" />
+    <Compile Include="tree\serializers.py" />
+    <Compile Include="tree\tasks.py" />
+    <Compile Include="tree\tests.py" />
+    <Compile Include="tree\urls.py" />
+    <Compile Include="tree\utilities.py" />
+    <Compile Include="tree\views.py" />
+    <Compile Include="tree\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="authentication" />
+    <Folder Include="authentication\migrations" />
+    <Folder Include="bin" />
+    <Folder Include="homePage" />
+    <Folder Include="homePage\migrations" />
+    <Folder Include="homePage\static\" />
+    <Folder Include="homePage\static\homePage" />
+    <Folder Include="homePage\static\homePage\assets\" />
+    <Folder Include="homePage\static\homePage\assets\reconnectingSocket" />
+    <Folder Include="homePage\templates\" />
+    <Folder Include="homePage\templates\homePage" />
+    <Folder Include="milosSite" />
+    <Folder Include="obj\" />
+    <Folder Include="obj\Debug" />
+    <Folder Include="static\" />
+    <Folder Include="static\admin\" />
+    <Folder Include="static\admin\css" />
+    <Folder Include="static\admin\css\vendor\" />
+    <Folder Include="static\admin\css\vendor\select2" />
+    <Folder Include="static\admin\fonts" />
+    <Folder Include="static\admin\img" />
+    <Folder Include="static\admin\img\gis" />
+    <Folder Include="static\admin\js" />
+    <Folder Include="static\admin\js\admin" />
+    <Folder Include="static\admin\js\vendor\" />
+    <Folder Include="static\admin\js\vendor\jquery" />
+    <Folder Include="static\admin\js\vendor\select2" />
+    <Folder Include="static\admin\js\vendor\select2\i18n" />
+    <Folder Include="static\admin\js\vendor\xregexp" />
+    <Folder Include="static\django_extensions\" />
+    <Folder Include="static\django_extensions\css" />
+    <Folder Include="static\django_extensions\img" />
+    <Folder Include="static\django_extensions\js" />
+    <Folder Include="static\homePage" />
+    <Folder Include="static\homePage\assets\" />
+    <Folder Include="static\homePage\assets\reconnectingSocket" />
+    <Folder Include="static\rest_framework\" />
+    <Folder Include="static\rest_framework\css" />
+    <Folder Include="static\rest_framework\docs\" />
+    <Folder Include="static\rest_framework\docs\css" />
+    <Folder Include="static\rest_framework\docs\img" />
+    <Folder Include="static\rest_framework\docs\js" />
+    <Folder Include="static\rest_framework\fonts" />
+    <Folder Include="static\rest_framework\img" />
+    <Folder Include="static\rest_framework\js" />
+    <Folder Include="tree" />
+    <Folder Include="tree\migrations" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Django.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <AutoAssignPort>True</AutoAssignPort>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

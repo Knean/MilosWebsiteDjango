@@ -1,9 +1,11 @@
 from channels.consumer import SyncConsumer
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
+from tree.serializers import NodeSerializer
+import json
 import asyncio
 
-from .models import Tree
+from .models import Tree, Node
 class TreeConsumer(WebsocketConsumer):
     
     def connect(self):
@@ -11,13 +13,23 @@ class TreeConsumer(WebsocketConsumer):
         self.accept()
         print ("connection made")
         async_to_sync(self.channel_layer.group_add)("tree", self.channel_name)
-
+        serialized_data = []
+        if Tree.objects.all().exists():
+            print("there are trees")
+            for tree in Tree.objects.all():       
+                serialized_data.append(json.loads( tree.json_string))
+        else:
+            print("no trees")
+            nodes = Node.objects.all()
+            serializer = NodeSerializer(nodes, many=True)        
+            serialized_data.append( serializer.data)           
+            
         tree = Tree.objects.first()
         async_to_sync(self.channel_layer.group_send)(
         "tree", 
         {
         "type": "tree.data", 
-        "text": tree.json_string,
+        "text": json.dumps(serialized_data),
         }
     )
 
