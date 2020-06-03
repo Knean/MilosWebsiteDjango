@@ -975,10 +975,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         key: "dostuff",
         value: function dostuff() {
           var that = this;
-          d3.selectAll("svg").remove();
           var promise = new Promise(function (resolve, reject) {
             that.loading = true;
             setTimeout(function () {
+              d3.selectAll("svg").remove();
               that.allTrees.forEach(function (tree, index) {
                 return that.renderTree(that.allTrees[index], index);
               });

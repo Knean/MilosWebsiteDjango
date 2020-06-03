@@ -537,10 +537,10 @@ class HomepageComponent {
     }
     dostuff() {
         let that = this;
-        d3.selectAll("svg").remove();
         let promise = new Promise(function (resolve, reject) {
             that.loading = true;
             setTimeout(() => {
+                d3.selectAll("svg").remove();
                 that.allTrees.forEach((tree, index) => that.renderTree(that.allTrees[index], index));
                 resolve("done");
             }, 500);
