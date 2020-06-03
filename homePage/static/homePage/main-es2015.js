@@ -537,20 +537,8 @@ class HomepageComponent {
     }
     dostuff() {
         let that = this;
-        let promise = new Promise(function (resolve, reject) {
-            that.loading = true;
-            setTimeout(() => {
-                d3.selectAll("svg").remove();
-                that.allTrees.forEach((tree, index) => that.renderTree(that.allTrees[index], index));
-                resolve("done");
-            }, 500);
-            // not taking our time to do the job
-            ; // immediately give the result: 123
-        });
-        promise.then((result) => {
-            console.log("resized ");
-            that.loading = false;
-        });
+        d3.selectAll("svg").remove();
+        this.allTrees.forEach((tree, index) => this.renderTree(that.allTrees[index], index));
     }
     selectTab(index) {
         this.tabs.forEach(tab => tab.selected = false);

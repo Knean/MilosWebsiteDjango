@@ -974,22 +974,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(HomepageComponent, [{
         key: "dostuff",
         value: function dostuff() {
-          var that = this;
-          var promise = new Promise(function (resolve, reject) {
-            that.loading = true;
-            setTimeout(function () {
-              d3.selectAll("svg").remove();
-              that.allTrees.forEach(function (tree, index) {
-                return that.renderTree(that.allTrees[index], index);
-              });
-              resolve("done");
-            }, 500); // not taking our time to do the job
+          var _this7 = this;
 
-            ; // immediately give the result: 123
-          });
-          promise.then(function (result) {
-            console.log("resized ");
-            that.loading = false;
+          var that = this;
+          d3.selectAll("svg").remove();
+          this.allTrees.forEach(function (tree, index) {
+            return _this7.renderTree(that.allTrees[index], index);
           });
         }
       }, {
@@ -1067,26 +1057,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this7 = this;
+          var _this8 = this;
 
           //this.auth.user.next({username: "cumLord"})
           this.auth.get_user();
           this.auth.user.subscribe(function (result) {
-            _this7.user = result;
+            _this8.user = result;
           });
           this.auth.userList.subscribe(function (dataResponse) {
-            _this7.users = dataResponse;
+            _this8.users = dataResponse;
           });
         }
       }, {
         key: "ngAfterViewInit",
         value: function ngAfterViewInit() {
-          var _this8 = this;
+          var _this9 = this;
 
           this.data_service.createConnection();
           this.data_service.tree_data.subscribe(function (result) {
             console.log(result);
-            _this8.allTrees = result; //this.renderTree(this.allTrees[this.index])
+            _this9.allTrees = result; //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
 
             /*           if (typeof Worker !== 'undefined') {
@@ -1104,7 +1094,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         // You should add a fallback so that your program still executes correctly.
                       } */
 
-            var that = _this8;
+            var that = _this9;
             var promise = new Promise(function (resolve, reject) {
               that.loading = true;
               setTimeout(function () {
@@ -2253,12 +2243,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(TreeComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this9 = this;
+          var _this10 = this;
 
           console.log(this.data, " its the mofoking data");
           this.auth.userList.subscribe(function (dataResponse) {
-            _this9.users = dataResponse;
-            console.log(_this9.users, "this is the users data form subscription");
+            _this10.users = dataResponse;
+            console.log(_this10.users, "this is the users data form subscription");
           });
           this.name = this.data.length.toString();
         }
