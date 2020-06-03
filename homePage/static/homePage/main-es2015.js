@@ -635,9 +635,9 @@ class HomepageComponent {
                       } */
             let that = this;
             let promise = new Promise(function (resolve, reject) {
-                d3.selectAll("svg").remove();
                 that.loading = true;
                 setTimeout(() => {
+                    d3.selectAll("svg").remove();
                     result.forEach((tree, index) => that.renderTree(that.allTrees[index], index));
                     resolve("done");
                 }, 300);

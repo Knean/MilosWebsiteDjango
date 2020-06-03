@@ -1106,9 +1106,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             var that = _this8;
             var promise = new Promise(function (resolve, reject) {
-              d3.selectAll("svg").remove();
               that.loading = true;
               setTimeout(function () {
+                d3.selectAll("svg").remove();
                 result.forEach(function (tree, index) {
                   return that.renderTree(that.allTrees[index], index);
                 });
