@@ -548,22 +548,10 @@ class HomepageComponent {
     ngOnInit() {
         this.reload = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"](null);
         this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["debounce"])(() => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(1000))).subscribe(() => {
-            let that = this;
-            let promise = new Promise(function (resolve, reject) {
-                that.loading = true;
-                setTimeout(() => {
-                    d3.selectAll("svg").remove();
-                    that.allTrees.forEach((tree, index) => that.renderTree(that.allTrees[index], index));
-                    resolve("done");
-                }, 300);
-                // not taking our time to do the job
-                ; // immediately give the result: 123
-            });
-            promise.then((result) => {
-                console.log("promised deliverd");
-                that.loading = false;
-            });
-            console.log("reloaded theoretically");
+            this.loading = true;
+            d3.selectAll("svg").remove();
+            this.allTrees.forEach((tree, index) => this.renderTree(this.allTrees[index], index));
+            this.loading = false;
         });
         //this.auth.user.next({username: "cumLord"})
         this.auth.get_user();
@@ -628,7 +616,7 @@ class HomepageComponent {
         this.data_service.createConnection();
         this.data_service.tree_data.subscribe((result) => {
             console.log(result);
-            this.allTrees = result;
+            this.allTrees = result.sort((a, b) => b.length - a.length);
             this.reload.next("reload baby");
             //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
@@ -641,7 +629,7 @@ class HomepageComponent {
                         result.forEach((tree, index)=>{
                           worker.postMessage({data: result[index],users:this.users, width: window.innerWidth, height: window.innerHeight});
                         })
-            
+    
                       } else {
                         // Web workers are not supported in this environment.
                         // You should add a fallback so that your program still executes correctly.

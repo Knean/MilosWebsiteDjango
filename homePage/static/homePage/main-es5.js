@@ -1004,24 +1004,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["debounce"])(function () {
             return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(1000);
           })).subscribe(function () {
-            var that = _this8;
-            var promise = new Promise(function (resolve, reject) {
-              that.loading = true;
-              setTimeout(function () {
-                d3.selectAll("svg").remove();
-                that.allTrees.forEach(function (tree, index) {
-                  return that.renderTree(that.allTrees[index], index);
-                });
-                resolve("done");
-              }, 300); // not taking our time to do the job
+            _this8.loading = true;
+            d3.selectAll("svg").remove();
 
-              ; // immediately give the result: 123
+            _this8.allTrees.forEach(function (tree, index) {
+              return _this8.renderTree(_this8.allTrees[index], index);
             });
-            promise.then(function (result) {
-              console.log("promised deliverd");
-              that.loading = false;
-            });
-            console.log("reloaded theoretically");
+
+            _this8.loading = false;
           }); //this.auth.user.next({username: "cumLord"})
 
           this.auth.get_user();
@@ -1112,7 +1102,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.data_service.createConnection();
           this.data_service.tree_data.subscribe(function (result) {
             console.log(result);
-            _this9.allTrees = result;
+            _this9.allTrees = result.sort(function (a, b) {
+              return b.length - a.length;
+            });
 
             _this9.reload.next("reload baby"); //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
@@ -1126,8 +1118,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         result.forEach((tree, index)=>{
                           worker.postMessage({data: result[index],users:this.users, width: window.innerWidth, height: window.innerHeight});
                         })
-            
-                      } else {
+                            } else {
                         // Web workers are not supported in this environment.
                         // You should add a fallback so that your program still executes correctly.
                       } */
