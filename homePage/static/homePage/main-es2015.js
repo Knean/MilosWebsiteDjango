@@ -629,6 +629,7 @@ class HomepageComponent {
         this.data_service.tree_data.subscribe((result) => {
             console.log(result);
             this.allTrees = result;
+            this.reload.next("reload baby");
             //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
             /*           if (typeof Worker !== 'undefined') {

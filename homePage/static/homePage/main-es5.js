@@ -1112,7 +1112,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.data_service.createConnection();
           this.data_service.tree_data.subscribe(function (result) {
             console.log(result);
-            _this9.allTrees = result; //this.renderTree(this.allTrees[this.index])
+            _this9.allTrees = result;
+
+            _this9.reload.next("reload baby"); //this.renderTree(this.allTrees[this.index])
             //flawed!! introduce web workers
 
             /*           if (typeof Worker !== 'undefined') {
@@ -1129,6 +1131,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         // Web workers are not supported in this environment.
                         // You should add a fallback so that your program still executes correctly.
                       } */
+
           });
         }
       }]);
