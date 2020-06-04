@@ -717,61 +717,73 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    /*! rxjs */
+    "./node_modules/rxjs/_esm2015/index.js");
+    /* harmony import */
+
+
+    var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    /*! rxjs/operators */
+    "./node_modules/rxjs/_esm2015/operators/index.js");
+    /* harmony import */
+
+
+    var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
     /*! @angular/material/dialog */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/dialog.js");
     /* harmony import */
 
 
-    var _authentication_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    var _authentication_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
     /*! ../authentication.service */
     "./src/app/authentication.service.ts");
     /* harmony import */
 
 
-    var _purchase_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    var _purchase_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
     /*! ../purchase.service */
     "./src/app/purchase.service.ts");
     /* harmony import */
 
 
-    var _data_reception_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    var _data_reception_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
     /*! ../data-reception.service */
     "./src/app/data-reception.service.ts");
     /* harmony import */
 
 
-    var _tree_generator_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
+    var _tree_generator_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
     /*! ../tree-generator.service */
     "./src/app/tree-generator.service.ts");
     /* harmony import */
 
 
-    var _angular_material_toolbar__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
+    var _angular_material_toolbar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
     /*! @angular/material/toolbar */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/toolbar.js");
     /* harmony import */
 
 
-    var _angular_common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
+    var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
     /*! @angular/common */
     "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
     /* harmony import */
 
 
-    var _angular_material_button__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
+    var _angular_material_button__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
     /*! @angular/material/button */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/button.js");
     /* harmony import */
 
 
-    var _angular_material_icon__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
+    var _angular_material_icon__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(
     /*! @angular/material/icon */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/icon.js");
     /* harmony import */
 
 
-    var _angular_material_menu__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
+    var _angular_material_menu__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
     /*! @angular/material/menu */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/menu.js");
 
@@ -977,9 +989,47 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this7 = this;
 
           var that = this;
+          this.reload.next("oh yea");
           d3.selectAll("svg").remove();
           this.allTrees.forEach(function (tree, index) {
             return _this7.renderTree(that.allTrees[index], index);
+          });
+        }
+      }, {
+        key: "ngOnInit",
+        value: function ngOnInit() {
+          var _this8 = this;
+
+          this.reload = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"](null);
+          this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["debounce"])(function () {
+            return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(1000);
+          })).subscribe(function () {
+            var that = _this8;
+            var promise = new Promise(function (resolve, reject) {
+              that.loading = true;
+              setTimeout(function () {
+                d3.selectAll("svg").remove();
+                that.allTrees.forEach(function (tree, index) {
+                  return that.renderTree(that.allTrees[index], index);
+                });
+                resolve("done");
+              }, 300); // not taking our time to do the job
+
+              ; // immediately give the result: 123
+            });
+            promise.then(function (result) {
+              console.log("promised deliverd");
+              that.loading = false;
+            });
+            console.log("reloaded theoretically");
+          }); //this.auth.user.next({username: "cumLord"})
+
+          this.auth.get_user();
+          this.auth.user.subscribe(function (result) {
+            _this8.user = result;
+          });
+          this.auth.userList.subscribe(function (dataResponse) {
+            _this8.users = dataResponse;
           });
         }
       }, {
@@ -1055,20 +1105,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return "a name";
         }
       }, {
-        key: "ngOnInit",
-        value: function ngOnInit() {
-          var _this8 = this;
-
-          //this.auth.user.next({username: "cumLord"})
-          this.auth.get_user();
-          this.auth.user.subscribe(function (result) {
-            _this8.user = result;
-          });
-          this.auth.userList.subscribe(function (dataResponse) {
-            _this8.users = dataResponse;
-          });
-        }
-      }, {
         key: "ngAfterViewInit",
         value: function ngAfterViewInit() {
           var _this9 = this;
@@ -1093,24 +1129,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         // Web workers are not supported in this environment.
                         // You should add a fallback so that your program still executes correctly.
                       } */
-
-            var that = _this9;
-            var promise = new Promise(function (resolve, reject) {
-              that.loading = true;
-              setTimeout(function () {
-                d3.selectAll("svg").remove();
-                result.forEach(function (tree, index) {
-                  return that.renderTree(that.allTrees[index], index);
-                });
-                resolve("done");
-              }, 300); // not taking our time to do the job
-
-              ; // immediately give the result: 123
-            });
-            promise.then(function (result) {
-              console.log("promised deliverd");
-              that.loading = false;
-            });
           });
         }
       }]);
@@ -1119,7 +1137,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }();
 
     HomepageComponent.ɵfac = function HomepageComponent_Factory(t) {
-      return new (t || HomepageComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_material_dialog__WEBPACK_IMPORTED_MODULE_4__["MatDialog"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_authentication_service__WEBPACK_IMPORTED_MODULE_5__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_purchase_service__WEBPACK_IMPORTED_MODULE_6__["PurchaseService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_data_reception_service__WEBPACK_IMPORTED_MODULE_7__["DataReceptionService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_tree_generator_service__WEBPACK_IMPORTED_MODULE_8__["TreeGeneratorService"]));
+      return new (t || HomepageComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_material_dialog__WEBPACK_IMPORTED_MODULE_6__["MatDialog"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_authentication_service__WEBPACK_IMPORTED_MODULE_7__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_purchase_service__WEBPACK_IMPORTED_MODULE_8__["PurchaseService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_data_reception_service__WEBPACK_IMPORTED_MODULE_9__["DataReceptionService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_tree_generator_service__WEBPACK_IMPORTED_MODULE_10__["TreeGeneratorService"]));
     };
 
     HomepageComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -1204,7 +1222,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"]("hidden", !ctx.loading)("loaderHolder", ctx.loading);
         }
       },
-      directives: [_angular_material_toolbar__WEBPACK_IMPORTED_MODULE_9__["MatToolbar"], _angular_common__WEBPACK_IMPORTED_MODULE_10__["NgIf"], _angular_material_button__WEBPACK_IMPORTED_MODULE_11__["MatButton"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_12__["MatIcon"], _angular_common__WEBPACK_IMPORTED_MODULE_10__["NgForOf"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_13__["MatMenuTrigger"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_13__["_MatMenu"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_13__["MatMenuItem"]],
+      directives: [_angular_material_toolbar__WEBPACK_IMPORTED_MODULE_11__["MatToolbar"], _angular_common__WEBPACK_IMPORTED_MODULE_12__["NgIf"], _angular_material_button__WEBPACK_IMPORTED_MODULE_13__["MatButton"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_14__["MatIcon"], _angular_common__WEBPACK_IMPORTED_MODULE_12__["NgForOf"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_15__["MatMenuTrigger"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_15__["_MatMenu"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_15__["MatMenuItem"]],
       styles: [".tab_item[_ngcontent-%COMP%]{\r\n  flex-grow: 1;\r\n  flex-shrink: 1;\r\n\r\n  background-color:rgb(159, 159, 159) ;\r\n\r\n}\r\n\r\n.tab_item_selected[_ngcontent-%COMP%]{\r\n  background:white;\r\n}\r\n\r\n.tab_bar[_ngcontent-%COMP%]{\r\n  display: flex;\r\n  justify-content: space-around\r\n}\r\n\r\n.content[_ngcontent-%COMP%]{\r\n  display: none\r\n}\r\n\r\n.selected[_ngcontent-%COMP%]{\r\n  display: block\r\n}\r\n\r\n.hidden[_ngcontent-%COMP%]{\r\n  display: none\r\n}\r\n\r\n.loaderHolder[_ngcontent-%COMP%]{\r\n\r\n  display:flex;\r\n  align-items: center;\r\n  height: 65vh;\r\n\r\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImhvbWVwYWdlLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUNBO0VBQ0UsWUFBWTtFQUNaLGNBQWM7O0VBRWQsb0NBQW9DOztBQUV0Qzs7QUFFQTtFQUNFLGdCQUFnQjtBQUNsQjs7QUFDQTtFQUNFLGFBQWE7RUFDYjtBQUNGOztBQUNBO0VBQ0U7QUFDRjs7QUFDQTtFQUNFO0FBQ0Y7O0FBRUE7RUFDRTtBQUNGOztBQUNBOztFQUVFLFlBQVk7RUFDWixtQkFBbUI7RUFDbkIsWUFBWTs7QUFFZCIsImZpbGUiOiJob21lcGFnZS5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiXHJcbi50YWJfaXRlbXtcclxuICBmbGV4LWdyb3c6IDE7XHJcbiAgZmxleC1zaHJpbms6IDE7XHJcblxyXG4gIGJhY2tncm91bmQtY29sb3I6cmdiKDE1OSwgMTU5LCAxNTkpIDtcclxuXHJcbn1cclxuXHJcbi50YWJfaXRlbV9zZWxlY3RlZHtcclxuICBiYWNrZ3JvdW5kOndoaXRlO1xyXG59XHJcbi50YWJfYmFye1xyXG4gIGRpc3BsYXk6IGZsZXg7XHJcbiAganVzdGlmeS1jb250ZW50OiBzcGFjZS1hcm91bmRcclxufVxyXG4uY29udGVudHtcclxuICBkaXNwbGF5OiBub25lXHJcbn1cclxuLnNlbGVjdGVke1xyXG4gIGRpc3BsYXk6IGJsb2NrXHJcbn1cclxuXHJcbi5oaWRkZW57XHJcbiAgZGlzcGxheTogbm9uZVxyXG59XHJcbi5sb2FkZXJIb2xkZXJ7XHJcblxyXG4gIGRpc3BsYXk6ZmxleDtcclxuICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gIGhlaWdodDogNjV2aDtcclxuXHJcbn1cclxuIl19 */"]
     });
     /*@__PURE__*/
@@ -1219,15 +1237,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }]
       }], function () {
         return [{
-          type: _angular_material_dialog__WEBPACK_IMPORTED_MODULE_4__["MatDialog"]
+          type: _angular_material_dialog__WEBPACK_IMPORTED_MODULE_6__["MatDialog"]
         }, {
-          type: _authentication_service__WEBPACK_IMPORTED_MODULE_5__["AuthenticationService"]
+          type: _authentication_service__WEBPACK_IMPORTED_MODULE_7__["AuthenticationService"]
         }, {
-          type: _purchase_service__WEBPACK_IMPORTED_MODULE_6__["PurchaseService"]
+          type: _purchase_service__WEBPACK_IMPORTED_MODULE_8__["PurchaseService"]
         }, {
-          type: _data_reception_service__WEBPACK_IMPORTED_MODULE_7__["DataReceptionService"]
+          type: _data_reception_service__WEBPACK_IMPORTED_MODULE_9__["DataReceptionService"]
         }, {
-          type: _tree_generator_service__WEBPACK_IMPORTED_MODULE_8__["TreeGeneratorService"]
+          type: _tree_generator_service__WEBPACK_IMPORTED_MODULE_10__["TreeGeneratorService"]
         }];
       }, {
         dostuff: [{
