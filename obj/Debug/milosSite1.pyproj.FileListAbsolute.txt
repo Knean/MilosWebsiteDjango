@@ -1,3 +1,0 @@
-D:\Documents\GitHub\milosSite\obj\Debug\milosSite1.pyproj.CoreCompileInputs.cache
-D:\Documents\GitHub\milosSite\bin\Microsoft.PythonTools.WebRole.dll
-D:\Documents\GitHub\milosSite\bin\wfastcgi.py

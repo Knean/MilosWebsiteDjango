@@ -10,6 +10,9 @@ from asgiref.sync import async_to_sync
 from tree.serializers import NodeSerializer
 import json
 # Create your views here.
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+@ensure_csrf_cookie
 def displayHomePage(request, userForm = None, registrationForm = None):
     if userForm ==None:
         userForm = AuthForm()
@@ -24,7 +27,6 @@ def displayHomePage(request, userForm = None, registrationForm = None):
     return render(
         request, 'homePage/index.html',
         context ={"nodes":nodes, "form":form,"user":user, "userForm":userForm, "regForm":registrationForm})
-
 
 
 def createTreeNode(request):
