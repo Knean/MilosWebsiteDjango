@@ -1103,7 +1103,7 @@ class TreeGeneratorService {
         graph.selectAll('.node').remove();
         graph.selectAll('.link').remove();
         data.sort((a, b) => a.number - b.number);
-        data.sort((a, b) => a.number % 2 == 1 ? a.number - b.number : b.number - a.number);
+        data.sort((a, b) => a.number % 2 == 0 ? a.number - b.number : b.number - a.number);
         console.log(data, "data before stratify");
         // stratify the data
         var rootNode = d3.stratify()

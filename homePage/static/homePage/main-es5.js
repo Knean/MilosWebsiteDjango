@@ -2122,7 +2122,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return a.number - b.number;
           });
           data.sort(function (a, b) {
-            return a.number % 2 == 1 ? a.number - b.number : b.number - a.number;
+            return a.number % 2 == 0 ? a.number - b.number : b.number - a.number;
           });
           console.log(data, "data before stratify"); // stratify the data
 
