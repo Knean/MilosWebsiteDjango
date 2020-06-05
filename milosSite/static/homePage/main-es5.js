@@ -620,6 +620,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
 
           var ws_path = ws_scheme + '://' + host + "/treeChannel/";
+          /*  var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/" */
+
           return ws_path;
         }
       }, {
@@ -627,7 +629,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function createConnection() {
           var _this6 = this;
 
-          /*  var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/" */
           var socket = new ReconnectingWebSocket(this.getSocketPath());
           console.log("Connecting to " + this.getSocketPath()); //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
 
@@ -2122,7 +2123,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return a.number - b.number;
           });
           data.sort(function (a, b) {
-            return a.number % 2 == 0 ? a.number - b.number : b.number - a.number;
+            return a.number % 2 == 0 ? b.number - a.number : 1;
+          });
+          data.sort(function (a, b) {
+            return a.number % 2 == 1 ? b.number - a.number : 1;
           });
           console.log(data, "data before stratify"); // stratify the data
 

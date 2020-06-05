@@ -367,10 +367,10 @@ class DataReceptionService {
             host = "127.0.0.1:8000";
         }
         var ws_path = ws_scheme + '://' + host + "/treeChannel/";
+        /*  var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/" */
         return ws_path;
     }
     createConnection() {
-        /*  var ws_path = "ws://limitless-wildwood-61701.herokuapp.com/treeChannel/" */
         var socket = new ReconnectingWebSocket(this.getSocketPath());
         console.log("Connecting to " + this.getSocketPath());
         //let socket = new WebSocket("wss://limitless-wildwood-61701.herokuapp.com/treeChannel");
@@ -1103,7 +1103,8 @@ class TreeGeneratorService {
         graph.selectAll('.node').remove();
         graph.selectAll('.link').remove();
         data.sort((a, b) => a.number - b.number);
-        data.sort((a, b) => a.number % 2 == 0 ? a.number - b.number : b.number - a.number);
+        data.sort((a, b) => a.number % 2 == 0 ? b.number - a.number : 1);
+        data.sort((a, b) => a.number % 2 == 1 ? b.number - a.number : 1);
         console.log(data, "data before stratify");
         // stratify the data
         var rootNode = d3.stratify()
