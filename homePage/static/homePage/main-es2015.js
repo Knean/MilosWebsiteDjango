@@ -620,7 +620,7 @@ class HomepageComponent {
         this.data_service.createConnection();
         this.data_service.tree_data.subscribe((result) => {
             console.log(result, " socket sent a message");
-            this.allTrees = result; //.sort((a, b) => b.length - a.length)
+            this.allTrees = result.sort((a, b) => b.length - a.length);
             if (result.length > 0) {
                 console.log(result[0].length, "is bigger than 0");
                 console.log(result[0].length);

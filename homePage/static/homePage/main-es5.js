@@ -1103,7 +1103,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.data_service.createConnection();
           this.data_service.tree_data.subscribe(function (result) {
             console.log(result, " socket sent a message");
-            _this8.allTrees = result; //.sort((a, b) => b.length - a.length)
+            _this8.allTrees = result.sort(function (a, b) {
+              return b.length - a.length;
+            });
 
             if (result.length > 0) {
               console.log(result[0].length, "is bigger than 0");
