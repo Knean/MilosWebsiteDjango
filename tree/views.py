@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from . import tasks
 import json
+from django.conf import settings
 # Create your views here.
 @api_view(['GET'])
 def node_list(request):
@@ -42,6 +43,9 @@ def buy(request):
     amount = int(request.data.get("amount"))        
     #tree.buy(amount,1, user = request.user.id) 
     print(request.user.id, " is buying: ", amount)  
-    tasks.buy.delay(amount = amount,user =request.user.id)
-      
+    # we dont use celery locally
+    if settings.LOCAL_DEPLOYMENT:
+        tasks.buy(amount = amount,user =1)
+    else:
+        tasks.buy.delay(amount = amount,user =request.user.id)  
     return Response(data= None, status = 200)  

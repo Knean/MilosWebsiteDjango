@@ -187,3 +187,9 @@ CHANNEL_LAYERS = {
         },
     },
 }
+LOCAL_DEPLOYMENT = False
+try:
+    from .local import *
+
+except:
+    pass
