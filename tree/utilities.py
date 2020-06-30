@@ -159,3 +159,54 @@ def identifyParent(node, *args):
         for parent in args:
             if parent == node["parent"]:
                 return parent
+
+
+def findRow(nodeNumber):
+    if nodeNumber == 1:
+        return {"rowNumber":0, "limits": {"even_limits": None, "odd_limits": None}}
+    rowNumber  = 1
+    limits = [2, 3]
+    nodes_in_row = 2
+    even_limits = [2,2]
+    odd_limits = [3,3]
+    while not (nodeNumber >limits[0]/2 and nodeNumber <= limits[1]):
+        limits = [limits[0] *2 +2, limits[1] * 2 +1]
+        even_limits = [int(limits [0]/2) + 1, limits[0]]
+        odd_limits = [int(limits[0]/2) +2, limits[1]]       
+        rowNumber +=1
+        nodes_in_row = int(limits[1]- limits[0]/2)
+    #return rowNumber, [even_limits, odd_limits], 
+    row = {"rowNumber":rowNumber, "limits": {"even_limits": even_limits, "odd_limits": odd_limits}}
+    return row
+
+def getX(nodeNumber):
+    if nodeNumber == 1:
+        return 0.5
+    row = findRow(nodeNumber)
+    
+    if nodeNumber % 2 == 1:
+        #all even numbers are considered smaller
+        smaller_even_numbers = row["limits"]["even_limits"][0] / 2
+        smaller_odd_numbers = ( nodeNumber - row["limits"]["odd_limits"][0] )/2
+    else:
+        smaller_even_numbers = (row["limits"]["even_limits"][1] - nodeNumber)/2
+        smaller_odd_numbers = 0 
+    
+
+        
+  
+    smaller_numbers_sum = smaller_odd_numbers + smaller_even_numbers        
+    nodes_sum = row["limits"]["even_limits"][0]
+    #fairCut = 1/ (nodes_sum + 2)
+    fairCut = 1/ (nodes_sum)
+    #fraction of all the smaller numbers which counts in the two borders as well
+    #location = fairCut* (smaller_numbers_sum + 1) + fairCut/2
+    location = fairCut* (smaller_numbers_sum) + fairCut/2
+    return round(location, 5)   
+    
+
+def getY(row, rowCount):
+    if rowCount == 0:
+        return 0
+    fairCut = 1/rowCount
+    return row * fairCut

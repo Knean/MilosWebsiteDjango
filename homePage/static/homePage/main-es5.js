@@ -2106,8 +2106,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(TreeGeneratorService, [{
         key: "generateTree",
         value: function generateTree(users, data, width, height) {
-          //add the group element that will contain all the drawings of the graph
+          var height = height - 200; //add the group element that will contain all the drawings of the graph
           //graph = svg.append('g').attr('transform', 'translate(50, 50)');
+
           users = users.sort(function (a, b) {
             return a.username.localeCompare(b.username);
           });
@@ -2147,17 +2148,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }).parentId(function (d) {
             return d.parent;
           })(data); //stratified data -> tree form data
+          //var treeData = d3.tree().size([width * 0.97, height*0.75])(rootNode)
+          //create the selection of nodes from the tree data descendants
 
-          var treeData = d3.tree().size([width * 0.97, height * 0.75])(rootNode); //create the selection of nodes from the tree data descendants
+          /*
+              var nodes = graph.selectAll('.node')
+                .data(treeData.descendants())
+           */
 
-          var nodes = graph.selectAll('.node').data(treeData.descendants()); // save the links data from the stratified data
+          var nodes = graph.selectAll('.node').data(data);
+          console.log(nodes, " these are the nodes");
+          /*
+          var nodes2 = graph.selectAll('.node')
+          .data(treeData.descendants())
+           */
 
-          var links = graph.selectAll('.link').data(rootNode.links()); // draw the links as path elements
+          console.log(nodes, " these are the nodes"); // save the links data from the stratified data
+
+          var links = graph.selectAll('.link').data(rootNode.links());
+          console.log(links, " results of links()"); // draw the links as path elements
 
           links.enter().append('path').attr('stroke', 'blue').attr('d', d3.linkVertical().x(function (d) {
-            return d.x;
+            return d.data.x * width;
           }).y(function (d) {
-            return d.y;
+            return d.data.y * height;
           })).attr('class', 'link').attr('fill', 'none').attr('stroke', function (d) {
             return d.target.data.hasOwnProperty('userName') ? scale(d.source.data.userName) : 'gray';
           }) ////#aaa
@@ -2165,13 +2179,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           var enterNodes = nodes.enter().append('g').attr('transform', function (d, i, n) {
             //rotates the tree
-            var x = d.x;
-            var y = d.y;
+            var x = d.x * width;
+            var y = d.y * height;
             return "translate(".concat(x, ",").concat(y, ")");
           }).attr('class', "node"); // draw rectangles in each node group
 
           var rectangles = enterNodes.append('rect').attr('fill', function (d) {
-            return d.data.userName != null ? scale(d.data.userName) : 'gray';
+            return d.userName != null ? scale(d.userName) : 'gray';
           }).attr('stroke', 'black').attr('width', 30) //30
           .attr('height', 30).attr('transform', function (d) {
             return "translate(".concat(-5, ", ").concat(-10, ")");
@@ -2185,9 +2199,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }); // add text to each of the node groups
 
           enterNodes.append('text').text(function (d) {
-            return d.data.number;
+            return d.number;
           }).attr('fill', function (d) {
-            return d.data.childrenMissing > 0 ? 'black' : "red";
+            return d.childrenMissing > 0 ? 'black' : "red";
           }).attr('transform', function (d) {
             return "translate(".concat(2, ", ", 10, ")");
           });

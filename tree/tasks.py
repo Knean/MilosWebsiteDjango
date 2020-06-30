@@ -4,6 +4,7 @@ from .serializers import NodeSerializer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
+from .utilities import findRow, getX, getY
 @shared_task
 def buy(amount, user):
     
@@ -18,8 +19,16 @@ def buy(amount, user):
         index += 1
 
     for tree in Tree.objects.all():
-        nodes = tree.node_set.all()
-        serializer = NodeSerializer(nodes, many=True)        
+        
+
+        nodes = tree.node_set.all().order_by("-number")
+        highestRow = findRow(nodes.first().number).get("rowNumber")
+
+        serializer = NodeSerializer(nodes, many=True)
+        for node in serializer.data:
+            node["x"] = getX(node["number"])
+            nodeRow = findRow(node["number"]).get("rowNumber")
+            node["y"] = getY(nodeRow, highestRow)        
         serialized_data.append( serializer.data)
         tree.json_string = json.dumps(serializer.data)
         tree.save()
