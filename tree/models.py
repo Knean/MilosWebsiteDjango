@@ -31,7 +31,7 @@ class Tree (models.Model):
                     parentNode = buyDict[parentNodeNumber]
                 except(KeyError):
                     #never happens
-                    print(nodeNumber)
+                    
                     parentNode = tree.get(number = parentNodeNumber)
                                            
                 if parentNode.child1 == nodePair["child"]:
@@ -42,7 +42,7 @@ class Tree (models.Model):
                 
                 buyDict[parentNodeNumber] = parentNode
                 #parentspaid += parentNode.updateChildrenMissing()
-                print(parentNode.user.id, " this thing has an id")
+              
                 paid = parentNode.updateChildrenMissing()
                 try:
                     payees[parentNode.user.id] += paid
