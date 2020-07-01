@@ -21,6 +21,7 @@ class Tree (models.Model):
 
     def buy(self,amount, startNode = None, user = 1, create = True):
         paidcount = 0
+        payees = {}
         def updateParents(nodeNumber):
             parentspaid = 0
             for nodePair in parentGenerator(nodeNumber):
@@ -40,9 +41,15 @@ class Tree (models.Model):
                 
                 
                 buyDict[parentNodeNumber] = parentNode
-                parentspaid += parentNode.updateChildrenMissing()
-
-            return parentspaid
+                #parentspaid += parentNode.updateChildrenMissing()
+                print(parentNode.user.id, " this thing has an id")
+                paid = parentNode.updateChildrenMissing()
+                try:
+                    payees[parentNode.user.id] += paid
+                except KeyError:
+                    payees[parentNode.user.id] = paid
+            
+            #return paid
 
         buyDict = {}
         nodesToPay = self.findNodeToPay(amount = amount, user = user)
@@ -157,9 +164,10 @@ class Tree (models.Model):
                             buyDict[newNode.number] = newNode
                             if create == False:
                                 return newNode
-                            paidcount += updateParents(newNode.number)
+                            #paidcount += updateParents(newNode.number)
+                            updateParents(newNode.number)
                             amount -=1                        
-                            untilPay -= 1
+                            untilPay -= 1 
                         #add all parents here
                         #create fetchallparentesmethod???
 
@@ -175,7 +183,8 @@ class Tree (models.Model):
                         buyDict[newNode.number] = newNode
                         if create == False:
                             return newNode
-                        paidcount += updateParents(newNode.number)
+                        #paidcount += updateParents(newNode.number)
+                        updateParents(newNode.number)
                         if difference == 0:
                             #reset generator as we may have skipped a few nodes
                             generator = nodeGenerator(currentNodeNumber)
@@ -195,7 +204,9 @@ class Tree (models.Model):
         #get values from dictionary
         Node.create(buyDict)
         print ( paidcount, " sold nodes")
-        return paidcount
+        print(payees ," payees ")
+        filteredPayees = { k: v for k,v in payees.items() if v>0}
+        return filteredPayees
     #not used anywhere
     def findFreeChild(self, startNode):
         #returns number only

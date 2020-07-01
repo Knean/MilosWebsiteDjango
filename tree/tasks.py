@@ -8,14 +8,18 @@ from .utilities import findRow, getX, getY
 @shared_task
 def buy(amount, user):
     
-    nodestobuy = amount
+    payments = {1:{user: amount}}
     index =1
     serialized_data = []
-    while nodestobuy > 0:
+    while bool(payments.get(index)):
         tree, created = Tree.objects.get_or_create(id = index, defaults = {"name":str(index),"json_string": json.dumps([])})
         #tree = Tree.objects.first()
-
-        nodestobuy = tree.buy(nodestobuy,user = user)
+    #next row update payments
+        for k,v in payments[index].items():        
+            for k, v in tree.buy(v,user = k).items():
+                payments.setdefault(index+1,{})
+                payments[index+1][k] = payments[index+1].get(k,0) + v     
+            #payments = tree.buy(nodestobuy,user = user)
         index += 1
 
     for tree in Tree.objects.all():
