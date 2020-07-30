@@ -20,194 +20,155 @@ class Tree (models.Model):
 
 
     def buy(self,amount, startNode = None, user = 1, create = True):
-        paidcount = 0
-        payees = {}
-        def updateParents(nodeNumber):
+        import pandas as pd
+        import numpy as np
+        import sys
+        tree = Tree.objects.first()
+        nodes = tree.node_set.all().values_list()
+        nodeSet = pd.DataFrame.from_records(
+            nodes, 
+            columns = ["id","tree_id","childrenMissing","number","user_id","child1","child1Value","child2","child2Value"],
+            index="number")
+        nodeSet["value"]= nodeSet["child1Value"] + nodeSet["child2Value"] ### naive
+        nodeSet.insert(1,"changed", False)
+        nodeSet.insert(1,"sold", False)
+
+        id = nodeSet.id.max() + 1 #naive gotta consider other trees
+        #gotta test this
+        id = id if not np.isnan(id) else 1
+
+        from tree.utilities import childOf, nodeGenerator, getIndex
+        #randomly picked start index
+        startNode = 1   ###################### # start node can only be picked but not created
+
+        #while loop starts here
+        nodeSet.sort_values(by = "childrenMissing", inplace =True)
+        mask1 = nodeSet.childrenMissing != 0
+        mask2 = nodeSet.apply(lambda node : childOf(startNode, node.name) , axis=1)
+        smallest = nodeSet.loc[mask1 & mask2, "childrenMissing"].min()
+        allSmalls = nodeSet.loc[nodeSet.childrenMissing == smallest,:].copy()
+        allSmalls["index"] = allSmalls.apply(lambda node: getIndex(node.name, startNode), axis=1)
+        allSmalls.sort_values("index", inplace = True)
+        payNode = allSmalls.iloc[0]
+
+        # this amount is the number of nodes the user buys
+        targetValue = 31
+        # ideally each child would be eat least 31
+        children = pd.DataFrame([
+            [payNode.child1, payNode.child1Value],
+            [payNode.child2, payNode.child2Value]],
+            columns = ["number","value"])
+        children["index"] = children.apply(lambda kid: getIndex(kid.number, payNode.name), axis = 1)
+        children["pay"] = 0
+        #children.sort_values("index")
+        children.iloc[1,-3] = 3
+        children.sort_values(by=["value", "index"], inplace = True) #index not necessary?
+
+        #amount = 20 amount comes from function parameter
+
+        #equalize children
+        childDifference = children.iloc[1].value - children.iloc[0].value  #this might be pointless because the smaller one is always at the top
+        valueMissing = max(targetValue - children.iloc[0].value, 0)
+        pay = min(childDifference,valueMissing, amount)        
+        amount -= pay
+        children.iloc[0,-1]+= pay
+        children.iloc[0,-3]+= pay
+        
+
+        # attempt to reach target
+        children.sort_values(by=["index"], inplace = True)
+        valueMissing = max(targetValue - children.iloc[0].value, 0) *2
+        pay = min(amount, valueMissing)
+        amount -= pay
+        half = int(pay/2)
+        children.iloc[[0,1],[-1, -3]] += half        
+        leftover = pay - (half*2)
+        children.iloc[[0],[-1, -3]] +=leftover #leftover is 1 or 0
+
+
+        generator = nodeGenerator(payNode.name)
+        child = 1
+        childToggle ={0:1,1:0}
+        childrenStacks = [[],[]]
+        pay = children.pay.sum()
+        while pay > 0 :   
+            child = childToggle[child]    
+            potentialNode = next(generator)    
+            if not potentialNode in nodeSet.index:        
+                if len(childrenStacks[child]) < children.iloc[child,-1]:
+                    childrenStacks[child].append(potentialNode)
+                    pay -= 1     
+        
+        childrenStacks = childrenStacks[0] + childrenStacks[1]              
+        #generate nodes
+        for node in childrenStacks:
+            generator = nodeGenerator(node)
+            next(generator) 
+            id +=1 #### flawed if there are multiple trees
+            row = {
+                'id': id,
+                'sold':False,
+                'changed':True,
+                'tree_id': 1, # should be a varaiable
+                'childrenMissing': 62,
+                'user_id': 1,
+                'child1': next(generator),
+                'child1Value': 0,
+                'child2':next(generator),
+                'child2Value': 0,
+                'value': 299,    
+                }
+            nodeSet.loc[node] = row
+        #update parents
+        from tree.utilities import parentGenerator
+        for node in childrenStacks:
             parentspaid = 0
-            for nodePair in parentGenerator(nodeNumber):
-               
+            for nodePair in parentGenerator(node):
+                # update child Value
                 parentNodeNumber = nodePair["parent"]
-                try:
-                    parentNode = buyDict[parentNodeNumber]
-                except(KeyError):
-                    #never happens
-                    
-                    parentNode = tree.get(number = parentNodeNumber)
-                                           
+                parentNode = nodeSet.loc[parentNodeNumber] #reference to the node
                 if parentNode.child1 == nodePair["child"]:
                     parentNode.child1Value +=1                                         
                 if parentNode.child2 ==  nodePair["child"]:
-                    parentNode.child2Value +=1 
+                    parentNode.child2Value +=1
+                    
+                #update childrenMissing value
+                soldBefore = self.childrenMissing == 0            
+                child1Value = parentNode.child1Value
+                child1Value = child1Value if child1Value <32 else 31
+                child2Value = parentNode.child2Value
+                child2Value = child2Value if child2Value <32 else 31            
+                parentNode.childrenMissing = 62 - child1Value - child2Value
+                soldNow = self.childrenMissing == 0
                 
-                
-                buyDict[parentNodeNumber] = parentNode
-                #parentspaid += parentNode.updateChildrenMissing()
-              
-                paid = parentNode.updateChildrenMissing()
-                try:
-                    payees[parentNode.user.id] += paid
-                except KeyError:
-                    payees[parentNode.user.id] = paid
-            
-            #return paid
+                if (soldNow and not soldBefore):# if the node just got sold
+                    parentNode.sold = True
 
-        buyDict = {}
-        nodesToPay = self.findNodeToPay(amount = amount, user = user)
-        nodesDict = {node.number: node for node in nodesToPay}
-        allRelevantNodes = []
-        buyList = []
+
+        #out of the main loop
+        #         
+        newAndUpdatedIDList = nodeSet.loc[
+            nodeSet.changed == True,[
+                "id",
+                "tree_id",
+                "childrenMissing",
+                "user_id",
+                "child1",
+                "child1Value",
+                "child2",
+                "child2Value"]].copy()
         
-        tree = Node.objects.all().order_by("-id")
-        #tree = tree.filter(user = user)
-        #id doesnt auto increment in sqlite  
-        try:
-            id = tree.first().id + 1
-        except:
-            id = 1
-        tree = self.node_set.all()
-
-        #calculate find smaller child
-        while nodesToPay and amount>0:
+        #save results (solds) before destroying the table
+        #sqlite allows only 999 elements in a query         
+        while(newAndUpdatedIDList):           
+            nodes = newAndUpdatedIDList[:950]  
+            #sql delete
+            oldSet = Node.objects.filter(pk__in = nodes.id.to_list())                            
+            oldSet.delete()       
+            #sql create            
+            Node.objects.bulk_create(newAndUpdatedIDList[:950].to_dict(orient="record")) 
+            newAndUpdatedIDList.drop(nodes.index, inplace = True)  
             
-            
-            # print(currentNodeNumber, " this is the node we're working on")
-            #why tho?
-            currentNode = nodesToPay.pop(0)
-            try:
-                currentNode = buyDict[currentNode.number]
-            except KeyError:
-                pass
-            currentNodeNumber = currentNode.number
-            
-            # buyNodes could be a dictionary would be sexier for adding parents
-             
-            
-            untilPay = currentNode.childrenMissing
-            if not tree.filter(number = currentNodeNumber).exists() and currentNodeNumber not in buyDict:
-                #pass
-                untilPay += 1
-                #move this logic onto the class
-                # this is broken
-            #if node exists figure out which child branch is smaller
-
-            child1 = currentNode.child1
-            child2 = currentNode.child2
-            child1Value = currentNode.child1Value
-            child2Value = currentNode.child2Value
-            smallerChild = child1 if child1Value <= child2Value else child2  
-
-            childrenDict = {child1:child1Value, child2:child2Value}
-
-            difference = abs(child1Value - child2Value)  
-
-                
-            generator = nodeGenerator(currentNodeNumber)
-
-            #make this less retarded
-            #createnew node and keep updating its children
-            #add all parent nodes automatically to the buy list
-            while amount > 0 and untilPay>0:
-                nodeNumber = next(generator)               
-                #in the tree
-                #not in tree but in buylist
-                #not in tree or in buylist but on a wrong branch
-                #generator doesnt reset when branches equalize
-                #create new node if it is not already in the tree or the buy list    
-                # any(list(filter (lambda x:x.number == nodeNumber, buyList))):          
-                if not tree.filter(number = nodeNumber).exists() and not nodeNumber in buyDict:
-                    try:
-                        newNode = nodesDict[nodeNumber]
-                        try:
-                            value = int(newNode.id)
-                        except ValueError:
-                            id +=1
-                            newNode.id = id 
-                            
-                        #check if id is retarded
-                    except KeyError:
-                        # it is not in nodesdict or buydict
-                        #createnew one
-                        id +=1
-                        theTree = self
-                        newNode = Node.create_object(
-                            tree = theTree,
-                            id = id, 
-                            user =User.objects.get(id = user), 
-                            number = nodeNumber)
-                    try: 
-                        parent = identifyParent(newNode.number, *childrenDict)
-                    except:
-                        parent = currentNodeNumber 
-                           
-                    if difference == 0:
-                        #if parent is not paid
-                        #get the right parent
-                        # if parent is paid : continue
-                        # 
-
-
-
-                        #cemu ovo preseravanje kad vec imamo child value?????????????
-                        #it could be in the tree
-                        # or it could not exist
-                        #am i overcomplicating?
-                        # maybe use a function that gets the node instead of copying the smae logic over and over again
-                        #if parent of child value < 31
-                        #ipak mi treba dictionary
-                        # plus jedan u dicitonary
-
-                        if  parent == currentNodeNumber or childrenDict[parent] < 31:
-                            try:
-                                childrenDict[parent] += 1
-                            except KeyError:
-                                pass
-                            buyDict[newNode.number] = newNode
-                            if create == False:
-                                return newNode
-                            #paidcount += updateParents(newNode.number)
-                            updateParents(newNode.number)
-                            amount -=1                        
-                            untilPay -= 1 
-                        #add all parents here
-                        #create fetchallparentesmethod???
-
-                    #if child nodes are not the same, append to smaller child
-                    #child of could be a node method
-
-                    if difference >0 and childOf(smallerChild, nodeNumber):
-                        
-                        childrenDict[parent] += 1
-                        difference -= 1 
-                        amount -=1                        
-                        untilPay -= 1
-                        buyDict[newNode.number] = newNode
-                        if create == False:
-                            return newNode
-                        #paidcount += updateParents(newNode.number)
-                        updateParents(newNode.number)
-                        if difference == 0:
-                            #reset generator as we may have skipped a few nodes
-                            generator = nodeGenerator(currentNodeNumber)
-                        
-
-
-                #add parents
-          
-
-                 
-            # do the parent update for every node in buydict
-            # makes sure we have an up to date number of childrenmissing
-            # parents are not in buy dict and they should be
-            # when adding a single element add all parents                    
-
-        
-        #get values from dictionary
-        Node.create(buyDict)
-        print ( paidcount, " sold nodes")
-        print(payees ," payees ")
-        filteredPayees = { k: v for k,v in payees.items() if v>0}
-        return filteredPayees
-    #not used anywhere
     def findFreeChild(self, startNode):
         #returns number only
         generator = nodeGenerator(startNode)
