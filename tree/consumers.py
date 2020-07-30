@@ -25,6 +25,7 @@ class TreeConsumer(WebsocketConsumer):
             serialized_data.append( serializer.data)           
             
         tree = Tree.objects.first()
+        #sends to everyone????
         async_to_sync(self.channel_layer.group_send)(
         "tree", 
         {

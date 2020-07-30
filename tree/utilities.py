@@ -161,23 +161,81 @@ def identifyParent(node, *args):
                 return parent
 
 
-def findRow(nodeNumber):
-    if nodeNumber == 1:
-        return {"rowNumber":0, "limits": {"even_limits": None, "odd_limits": None}}
-    rowNumber  = 1
-    limits = [2, 3]
-    nodes_in_row = 2
-    even_limits = [2,2]
-    odd_limits = [3,3]
-    while not (nodeNumber >limits[0]/2 and nodeNumber <= limits[1]):
-        limits = [limits[0] *2 +2, limits[1] * 2 +1]
-        even_limits = [int(limits [0]/2) + 1, limits[0]]
-        odd_limits = [int(limits[0]/2) +2, limits[1]]       
-        rowNumber +=1
-        nodes_in_row = int(limits[1]- limits[0]/2)
-    #return rowNumber, [even_limits, odd_limits], 
-    row = {"rowNumber":rowNumber, "limits": {"even_limits": even_limits, "odd_limits": odd_limits}}
-    return row
+def findRow(nodeNumber, startNode =1):
+    #potential infinite loop D:
+    if nodeNumber == startNode:
+        return {"rowNumber":0, "limits": {"even_limits": None, "odd_limits": None}, "size":1,"index" : 0}
+
+    if startNode == 1:
+
+        rowNumber  = 1
+        limits = [2, 3]
+        nodes_in_row = 2
+        even_limits = [2,2]
+        odd_limits = [3,3]
+        while not (nodeNumber >limits[0]/2 and nodeNumber <= limits[1]):
+            limits = [limits[0] *2 +2, limits[1] * 2 +1]
+            even_limits = [int(limits [0]/2) + 1, limits[0]]
+            odd_limits = [int(limits[0]/2) +2, limits[1]]       
+            rowNumber +=1
+            nodes_in_row = int(limits[1]- limits[0]/2)
+        #return rowNumber, [even_limits, odd_limits], 
+        row = {
+            "rowNumber":rowNumber, 
+            "limits": {
+                "even_limits": even_limits, 
+                "odd_limits": odd_limits},
+            "size":limits[1] - limits[0]+1,
+            "index": nodeNumber - 1
+        }
+        return row
+    if startNode % 2 == 1:
+        rowNumber  = 1
+        index = 0
+        limits = [startNode*2 -1, startNode *2 +1]
+        
+        while not (nodeNumber >=limits[0] and nodeNumber <= limits[1]):
+            rowNumber +=1
+            index += (limits[0]+1)/2 -1            
+            limits[0] = limits[0] * 2 -1
+            limits[1] = limits [1] *2 +1
+        middle = limits[0] + (limits[1]-limits[0])/2        
+        if nodeNumber < middle:
+            index += middle - nodeNumber            
+        if nodeNumber > middle:
+            index +=  nodeNumber - middle +1
+        row = {
+            "rowNumber":rowNumber, 
+            "limits": limits,
+            "size":(limits[1] - limits[0])/2+1,
+            "index": index
+        }
+        return row
+    if startNode % 2 == 0:       
+        rowNumber  = 1
+        index = 0
+        limits = [startNode*2 +2, startNode *2]
+        while not (nodeNumber >=limits[1] and nodeNumber <= limits[0]):
+            rowNumber +=1
+            index += limits[1]/2            
+            limits[0] = limits[0] * 2 +2
+            limits[1] = limits [1] *2 
+        middle = limits[0] - (limits[1]/2 -1)   
+        
+        if nodeNumber < middle:
+            index += middle - nodeNumber +1         
+        if nodeNumber > middle:
+            index +=  nodeNumber - middle
+        row = {
+            "rowNumber":rowNumber, 
+            "limits": limits,
+            "size":(limits[1] - limits[0])/2+1,
+            "index": index
+        }
+        return row
+def getIndex(finish, start = 1):
+    return findRow(finish, start)["index"]
+
 
 def getX(nodeNumber):
     if nodeNumber == 1:
