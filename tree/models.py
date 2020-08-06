@@ -19,156 +19,257 @@ class Tree (models.Model):
         return self.name
 
 
-    def buy(self,amount, startNode = None, user = 1, create = True):
+    def buy(self,amount, startNode = None, user = 1, create = True): #look up model inheritance
         import pandas as pd
         import numpy as np
         import sys
+        def updateParents(node, origin):   
+            if parentOf(node.child1,origin):
+                node.child1Value +=1                                         
+            else:
+                node.child2Value +=1
+            soldBefore = node.childrenMissing == 0           
+            child1Value = min(node.child1Value,31)
+            child2Value = min(node.child2Value,31)
+            node.childrenMissing = 62 - child1Value - child2Value
+            soldNow = node.childrenMissing == 0 
+            if (soldNow and not soldBefore):# if the node just got sold
+                node.sold = True 
+            node.changed =True  
+            return node
+
+
         tree = Tree.objects.first()
         nodes = tree.node_set.all().values_list()
         nodeSet = pd.DataFrame.from_records(
             nodes, 
-            columns = ["id","tree_id","childrenMissing","number","user_id","child1","child1Value","child2","child2Value"],
+            columns = ["id","tree_id","childrenMissing","number","userName","child1","child1Value","child2","child2Value"],
             index="number")
         nodeSet["value"]= nodeSet["child1Value"] + nodeSet["child2Value"] ### naive
         nodeSet.insert(1,"changed", False)
         nodeSet.insert(1,"sold", False)
+
+       
 
         id = nodeSet.id.max() + 1 #naive gotta consider other trees
         #gotta test this
         id = id if not np.isnan(id) else 1
 
         from tree.utilities import childOf, nodeGenerator, getIndex
-        #randomly picked start index
-        startNode = 1   ###################### # start node can only be picked but not created
 
-        #while loop starts here
-        nodeSet.sort_values(by = "childrenMissing", inplace =True)
-        mask1 = nodeSet.childrenMissing != 0
-        mask2 = nodeSet.apply(lambda node : childOf(startNode, node.name) , axis=1)
-        smallest = nodeSet.loc[mask1 & mask2, "childrenMissing"].min()
-        allSmalls = nodeSet.loc[nodeSet.childrenMissing == smallest,:].copy()
-        allSmalls["index"] = allSmalls.apply(lambda node: getIndex(node.name, startNode), axis=1)
-        allSmalls.sort_values("index", inplace = True)
-        payNode = allSmalls.iloc[0]
+        #tree not empty and user has some nodes in it find the lowest one
+        startNode = nodeSet.loc[nodeSet.userName == user].index.min()
+        if pd.isnull(startNode):
+            startNode = None
+        if startNode == None and not nodeSet.empty: #only valid for newcomer to the tree            
+            smallest = nodeSet.loc[nodeSet.childrenMissing != 0, "childrenMissing"].min()            
+            allSmalls = nodeSet.loc[nodeSet.childrenMissing == smallest,:].copy()
+            allSmalls["index"] = allSmalls.apply(lambda node: getIndex(node.name, 1), axis=1) #is it one?
+            allSmalls.sort_values("index", inplace = True)            
+            payNode = allSmalls.iloc[0]
+            print(payNode.name," is the easiest node to pay in the tree")
+            for node in nodeGenerator(payNode.name):
+                if node not in nodeSet.index:
+                    generator = nodeGenerator(node)
+                    next(generator)
+                    id +=1 #### flawed if there are multiple trees
+                    row = {
+                        'id': id,
+                        'sold':False,
+                        'changed':True,
+                        'tree_id': 1, # should be a varaiable
+                        'childrenMissing': 62,
+                        'userName': user,##fix this
+                        'child1': next(generator),
+                        'child1Value': 0,
+                        'child2':next(generator),
+                        'child2Value': 0,
+                        'value': 299,    
+                        }
+                    nodeSet.loc[node] = row
+                    amount -= 1
+                    startNode = payNode.name
+                    #update parents
+                    ancestors = [node["parent"] for node in parentGenerator(node)]
+                    print(node, " is its first free child")    
+                    nodeSet.loc[ancestors] = nodeSet.loc[ancestors].apply(updateParents, args = [node], axis = 1)
+                    print("parents of the start node updated")
+                    break
+                    """
+                    for nodePair in parentGenerator(node):                       
+                        parentNode = nodeSet.loc[nodePair["parent"]].copy() 
+                        #very very slow
+                        nodeSet.loc[nodePair["parent"],["child1Value","child2Value","childrenMissing","sold"]]=updateParent(parentNode, nodePair["child"])
+                    break"""
 
-        # this amount is the number of nodes the user buys
-        targetValue = 31
-        # ideally each child would be eat least 31
-        children = pd.DataFrame([
-            [payNode.child1, payNode.child1Value],
-            [payNode.child2, payNode.child2Value]],
-            columns = ["number","value"])
-        children["index"] = children.apply(lambda kid: getIndex(kid.number, payNode.name), axis = 1)
-        children["pay"] = 0
-        #children.sort_values("index")
-        children.iloc[1,-3] = 3
-        children.sort_values(by=["value", "index"], inplace = True) #index not necessary?
-
-        #amount = 20 amount comes from function parameter
-
-        #equalize children
-        childDifference = children.iloc[1].value - children.iloc[0].value  #this might be pointless because the smaller one is always at the top
-        valueMissing = max(targetValue - children.iloc[0].value, 0)
-        pay = min(childDifference,valueMissing, amount)        
-        amount -= pay
-        children.iloc[0,-1]+= pay
-        children.iloc[0,-3]+= pay
-        
-
-        # attempt to reach target
-        children.sort_values(by=["index"], inplace = True)
-        valueMissing = max(targetValue - children.iloc[0].value, 0) *2
-        pay = min(amount, valueMissing)
-        amount -= pay
-        half = int(pay/2)
-        children.iloc[[0,1],[-1, -3]] += half        
-        leftover = pay - (half*2)
-        children.iloc[[0],[-1, -3]] +=leftover #leftover is 1 or 0
-
-
-        generator = nodeGenerator(payNode.name)
-        child = 1
-        childToggle ={0:1,1:0}
-        childrenStacks = [[],[]]
-        pay = children.pay.sum()
-        while pay > 0 :   
-            child = childToggle[child]    
-            potentialNode = next(generator)    
-            if not potentialNode in nodeSet.index:        
-                if len(childrenStacks[child]) < children.iloc[child,-1]:
-                    childrenStacks[child].append(potentialNode)
-                    pay -= 1     
-        
-        childrenStacks = childrenStacks[0] + childrenStacks[1]              
-        #generate nodes
-        for node in childrenStacks:
-            generator = nodeGenerator(node)
-            next(generator) 
-            id +=1 #### flawed if there are multiple trees
+        if startNode == None and nodeSet.empty:
+            id += 1
             row = {
                 'id': id,
                 'sold':False,
                 'changed':True,
                 'tree_id': 1, # should be a varaiable
                 'childrenMissing': 62,
-                'user_id': 1,
-                'child1': next(generator),
+                'userName': user,##fix this
+                'child1': 2,
                 'child1Value': 0,
-                'child2':next(generator),
+                'child2': 3,
                 'child2Value': 0,
                 'value': 299,    
                 }
-            nodeSet.loc[node] = row
-        #update parents
-        from tree.utilities import parentGenerator
-        for node in childrenStacks:
-            parentspaid = 0
-            for nodePair in parentGenerator(node):
-                # update child Value
-                parentNodeNumber = nodePair["parent"]
-                parentNode = nodeSet.loc[parentNodeNumber] #reference to the node
-                if parentNode.child1 == nodePair["child"]:
-                    parentNode.child1Value +=1                                         
-                if parentNode.child2 ==  nodePair["child"]:
-                    parentNode.child2Value +=1
-                    
-                #update childrenMissing value
-                soldBefore = self.childrenMissing == 0            
-                child1Value = parentNode.child1Value
-                child1Value = child1Value if child1Value <32 else 31
-                child2Value = parentNode.child2Value
-                child2Value = child2Value if child2Value <32 else 31            
-                parentNode.childrenMissing = 62 - child1Value - child2Value
-                soldNow = self.childrenMissing == 0
-                
-                if (soldNow and not soldBefore):# if the node just got sold
-                    parentNode.sold = True
+            nodeSet.loc[1] = row
+            startNode = 1
+            amount -= 1
+            print("we've added the node number one")
+        ############# update parents tho    
 
+              
 
+        #while loop starts here
+        while amount > 0:
+            nodeSet.sort_values(by = "childrenMissing", inplace =True)
+            mask1 = nodeSet.childrenMissing != 0
+            mask2 = nodeSet.apply(lambda node : childOf(startNode, node.name) , axis=1) #simply skip this one if no startNode
+            smallest = nodeSet.loc[mask1 & mask2, "childrenMissing"].min()
+            mask3 = nodeSet.childrenMissing == smallest
+            #start node could default to 1
+            #assumes the start node exists
+            #only purchases the children
+            #buy startNode outside of the main loop            
+            allSmalls = nodeSet.loc[mask1 & mask2 & mask3,:].copy()
+            allSmalls["index"] = allSmalls.apply(lambda node: getIndex(node.name, startNode), axis=1)
+            allSmalls.sort_values("index", inplace = True)
+            payNode = allSmalls.iloc[0]
+            print(payNode, " this is the node we're trying to pay out")
+
+            # this amount is the number of nodes the user buys
+            targetValue = 31
+            # ideally each child would be eat least 31
+            children = pd.DataFrame([
+                [payNode.child1, payNode.child1Value],
+                [payNode.child2, payNode.child2Value]],
+                columns = ["number","value"])
+            children["index"] = children.apply(lambda kid: getIndex(kid.number, payNode.name), axis = 1)
+            children["pay"] = 0
+            #children.sort_values("index")
+            
+            children.sort_values(by=["value", "index"], inplace = True) #index not necessary?
+
+            #amount = 20 amount comes from function parameter
+
+            #equalize children
+            childDifference = children.iloc[1].value - children.iloc[0].value  #this might be pointless because the smaller one is always at the top
+            valueMissing = max(targetValue - children.iloc[0].value, 0)
+            pay = min(childDifference,valueMissing, amount)        
+            amount -= pay
+            children.iloc[0,-1]+= pay
+            children.iloc[0,-3]+= pay
+            
+
+            # attempt to reach target
+            children.sort_values(by=["index"], inplace = True)
+           
+            valueMissing = max(targetValue - children.iloc[0].value, 0) *2
+            pay = min(amount, valueMissing)
+            amount -= pay
+            half = int(pay/2)
+            children.iloc[[0,1],[-1, -3]] += half        
+            leftover = pay - (half*2)            
+            children.iloc[[0],[-1, -3]] +=leftover #leftover is 1 or 0        
+            generator = nodeGenerator(payNode.name)
+            child = 0
+            childToggle ={0:1,1:0}
+            childrenStacks = [[],[]]
+            pay = children.pay.sum()
+            print(children)
+            #invest points
+            while pay > 0 :   
+                child = childToggle[child]                 
+                potentialNode = next(generator)                   
+                if not potentialNode in nodeSet.index:        
+                    if len(childrenStacks[child]) < children.iloc[child,-1]:
+                        childrenStacks[child].append(potentialNode)
+                        pay -= 1         
+            
+            childrenStacks = childrenStacks[0] + childrenStacks[1]              
+            #generate nodes
+            for node in childrenStacks:
+                generator = nodeGenerator(node)
+                next(generator) 
+                id +=1 #### flawed if there are multiple trees
+                row = {
+                    'id': id,
+                    'sold':False,
+                    'changed':True,
+                    'tree_id': 1, # should be a varaiable
+                    'childrenMissing': 62,
+                    'userName': user, 
+                    'child1': next(generator),
+                    'child1Value': 0,
+                    'child2':next(generator),
+                    'child2Value': 0,
+                    'value': 299,    
+                    }
+                nodeSet.loc[node] = row
+            #update parents
+            print("updating parents")                   
+            for node in childrenStacks:
+                    ancestors = [node["parent"] for node in parentGenerator(node)]                                          
+                    nodeSet.loc[ancestors] = nodeSet.loc[ancestors].apply(updateParents, args = [node], axis = 1)
+                    """    
+                    for nodePair in parentGenerator(node):                       
+                        parentNode = nodeSet.loc[nodePair["parent"]].copy() 
+                        print("shit")
+                        #very very slow
+                        nodeSet.loc[nodePair["parent"],["child1Value","child2Value","childrenMissing","sold"]]=updateParent(parentNode, nodePair["child"])
+                    """
         #out of the main loop
-        #         
+        #make a copy of all the "sold" nodes 
+
+        #   
+        print("updating the database")      
         newAndUpdatedIDList = nodeSet.loc[
             nodeSet.changed == True,[
                 "id",
                 "tree_id",
                 "childrenMissing",
-                "user_id",
+                "userName",
                 "child1",
                 "child1Value",
                 "child2",
-                "child2Value"]].copy()
-        
-        #save results (solds) before destroying the table
-        #sqlite allows only 999 elements in a query         
-        while(newAndUpdatedIDList):           
+                "child2Value",
+                #"number"
+                ]].reset_index().rename(columns={"userName": "user_id","id":"pk"}).copy()
+        #update the json field
+        nodeSet.sort_index(inplace = True)
+        nodeSet["parent"] = nodeSet.apply(lambda node: findParent(node.name), axis = 1)
+        nodeSet.iloc[0,-3] = ""
+        biggest_number = nodeSet.iloc[-1].name
+        nodeSet["x"]= nodeSet.apply(lambda node: getX(node.name), axis = 1)
+        nodeSet["y"]= nodeSet.apply(lambda node: getY(node.name,biggest_number), axis = 1)
+
+        users = User.objects.only("username","id").values()
+        comprehensiveUsers = {user["id"]:user["username"] for user in users}
+        nodeSet["userName"] = nodeSet["userName"].apply(lambda user: comprehensiveUsers[user])
+
+        self.json_string =nodeSet.loc[:,["userName","child1","child1Value","child2","child2Value","childrenMissing","parent","x","y"]].reset_index().to_json(orient="records")
+        #add parent, x, y fields
+        #sqlite allows only 999 elements in a query 
+        while not newAndUpdatedIDList.empty:           
             nodes = newAndUpdatedIDList[:950]  
             #sql delete
-            oldSet = Node.objects.filter(pk__in = nodes.id.to_list())                            
+            oldSet = Node.objects.filter(pk__in = nodes.pk.to_list())                            
             oldSet.delete()       
-            #sql create            
-            Node.objects.bulk_create(newAndUpdatedIDList[:950].to_dict(orient="record")) 
+            #sql create
+            NodeList = [Node(**node) for node in nodes.to_dict(orient="record")]            
+            Node.objects.bulk_create(NodeList)#newAndUpdatedIDList[:950].to_dict(orient="record")) 
             newAndUpdatedIDList.drop(nodes.index, inplace = True)  
-            
+
+        sold = nodeSet.loc[nodeSet.sold == True,["sold","userName"]].groupby("userName").count().copy()
+        sold = sold.reset_index().to_dict(orient="record" )
+        self.save()
+        return sold
+
     def findFreeChild(self, startNode):
         #returns number only
         generator = nodeGenerator(startNode)

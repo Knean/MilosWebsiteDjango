@@ -220,8 +220,7 @@ def findRow(nodeNumber, startNode =1):
             index += limits[1]/2            
             limits[0] = limits[0] * 2 +2
             limits[1] = limits [1] *2 
-        middle = limits[0] - (limits[1]/2 -1)   
-        
+        middle = limits[0] - ((limits[0] - limits[1])/2)          
         if nodeNumber < middle:
             index += middle - nodeNumber +1         
         if nodeNumber > middle:
@@ -264,7 +263,17 @@ def getX(nodeNumber):
     
 
 def getY(row, rowCount):
+    row = findRow(row).get("rowNumber")
+    rowCount = findRow(rowCount).get("rowNumber")
     if rowCount == 0:
         return 0
     fairCut = 1/rowCount
     return row * fairCut
+
+def parentOf(parent,node):
+    if parent == node:
+        return True
+    for node in parentGenerator(node):
+        if node["parent"] == parent:
+            return True
+    return False
