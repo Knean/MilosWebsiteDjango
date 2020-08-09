@@ -45,7 +45,10 @@ def buy(request):
     print(request.user.id, " is buying: ", amount)  
     # we dont use celery locally
     if settings.LOCAL_DEPLOYMENT:
-        tasks.buy(amount = amount,user =1)
+        try:
+            tasks.buy(amount = amount,user =request.user.id)
+        except:
+            tasks.buy(amount = amount,user =1)
     else:
         tasks.buy.delay(amount = amount,user =request.user.id)  
     return Response(data= None, status = 200)  

@@ -23,6 +23,7 @@ class Tree (models.Model):
         import pandas as pd
         import numpy as np
         import sys
+        print(f"buying {amount} for the user: {user} in the tree: {self.id}")
         def updateParents(node, origin):   
             if parentOf(node.child1,origin):
                 node.child1Value +=1                                         
@@ -37,47 +38,17 @@ class Tree (models.Model):
                 node.sold = True 
             node.changed =True  
             return node
-
-
-        tree = Tree.objects.first()
-        nodes = tree.node_set.all().values_list()
-        nodeSet = pd.DataFrame.from_records(
-            nodes, 
-            columns = ["id","tree_id","childrenMissing","number","userName","child1","child1Value","child2","child2Value"],
-            index="number")
-        nodeSet["value"]= nodeSet["child1Value"] + nodeSet["child2Value"] ### naive
-        nodeSet.insert(1,"changed", False)
-        nodeSet.insert(1,"sold", False)
-
-       
-
-        id = nodeSet.id.max() + 1 #naive gotta consider other trees
-        #gotta test this
-        id = id if not np.isnan(id) else 1
-
-        from tree.utilities import childOf, nodeGenerator, getIndex
-
-        #tree not empty and user has some nodes in it find the lowest one
-        startNode = nodeSet.loc[nodeSet.userName == user].index.min()
-        if pd.isnull(startNode):
-            startNode = None
-        if startNode == None and not nodeSet.empty: #only valid for newcomer to the tree            
-            smallest = nodeSet.loc[nodeSet.childrenMissing != 0, "childrenMissing"].min()            
-            allSmalls = nodeSet.loc[nodeSet.childrenMissing == smallest,:].copy()
-            allSmalls["index"] = allSmalls.apply(lambda node: getIndex(node.name, 1), axis=1) #is it one?
-            allSmalls.sort_values("index", inplace = True)            
-            payNode = allSmalls.iloc[0]
-            print(payNode.name," is the easiest node to pay in the tree")
-            for node in nodeGenerator(payNode.name):
+        def getFirstFreeNode(startNode, id, tree_id, user, nodeSet):
+            for node in nodeGenerator(startNode):
                 if node not in nodeSet.index:
                     generator = nodeGenerator(node)
                     next(generator)
-                    id +=1 #### flawed if there are multiple trees
+                    #### flawed if there are multiple trees
                     row = {
                         'id': id,
                         'sold':False,
                         'changed':True,
-                        'tree_id': 1, # should be a varaiable
+                        'tree_id': tree_id, # should be a varaiable
                         'childrenMissing': 62,
                         'userName': user,##fix this
                         'child1': next(generator),
@@ -87,30 +58,52 @@ class Tree (models.Model):
                         'value': 299,    
                         }
                     nodeSet.loc[node] = row
-                    amount -= 1
-                    startNode = payNode.name
-                    #update parents
-                    ancestors = [node["parent"] for node in parentGenerator(node)]
-                    print(node, " is its first free child")    
-                    nodeSet.loc[ancestors] = nodeSet.loc[ancestors].apply(updateParents, args = [node], axis = 1)
-                    print("parents of the start node updated")
-                    break
-                    """
-                    for nodePair in parentGenerator(node):                       
-                        parentNode = nodeSet.loc[nodePair["parent"]].copy() 
-                        #very very slow
-                        nodeSet.loc[nodePair["parent"],["child1Value","child2Value","childrenMissing","sold"]]=updateParent(parentNode, nodePair["child"])
-                    break"""
-
+                    return nodeSet.loc[node]
+        tree = self
+        nodes = tree.node_set.all().values_list()
+        nodeSet = pd.DataFrame.from_records(
+            nodes, 
+            columns = ["id","tree_id","childrenMissing","number","userName","child1","child1Value","child2","child2Value"],
+            index="number")
+        nodeSet["value"]= nodeSet["child1Value"] + nodeSet["child2Value"] ### legacy -> remove later
+        nodeSet.insert(1,"changed", False)
+        nodeSet.insert(1,"sold", False) 
+        try:     
+            id = Node.objects.all().order_by("-id").first().id + 1 
+        except:
+            id = 1
+        from tree.utilities import childOf, nodeGenerator, getIndex
+        #assign startNode
+        #tree not empty and user has some nodes in it find the lowest one
+        startNode = nodeSet.loc[nodeSet.userName == user].index.min()
+        if pd.isnull(startNode):
+            startNode = None
+        #only valid for newcomer to the tree 
+        if startNode == None and not nodeSet.empty:            
+            smallest = nodeSet.loc[nodeSet.childrenMissing != 0, "childrenMissing"].min()            
+            allSmalls = nodeSet.loc[nodeSet.childrenMissing == smallest,:].copy()
+            allSmalls["index"] = allSmalls.apply(lambda node: getIndex(node.name, 1), axis=1) #is it one?
+            allSmalls.sort_values("index", inplace = True)            
+            payNode = allSmalls.iloc[0]
+            id += 1
+            node = getFirstFreeNode(payNode.name,id,tree.id,user,nodeSet)
+            amount -=1
+            #find the first free child of the easiest to pay Node
+            startNode = node.name #payNode.name
+            #update parents
+            ancestors = [node["parent"] for node in parentGenerator(startNode)]  
+            nodeSet.loc[ancestors] = nodeSet.loc[ancestors].apply(updateParents, args = [startNode], axis = 1)
+            
+        #if the tree is empty the start node is 1
         if startNode == None and nodeSet.empty:
             id += 1
             row = {
                 'id': id,
                 'sold':False,
                 'changed':True,
-                'tree_id': 1, # should be a varaiable
+                'tree_id': tree.id, 
                 'childrenMissing': 62,
-                'userName': user,##fix this
+                'userName': user,
                 'child1': 2,
                 'child1Value': 0,
                 'child2': 3,
@@ -120,29 +113,31 @@ class Tree (models.Model):
             nodeSet.loc[1] = row
             startNode = 1
             amount -= 1
-            print("we've added the node number one")
-        ############# update parents tho    
-
-              
 
         #while loop starts here
         while amount > 0:
             nodeSet.sort_values(by = "childrenMissing", inplace =True)
             mask1 = nodeSet.childrenMissing != 0
-            mask2 = nodeSet.apply(lambda node : childOf(startNode, node.name) , axis=1) #simply skip this one if no startNode
-            smallest = nodeSet.loc[mask1 & mask2, "childrenMissing"].min()
-            mask3 = nodeSet.childrenMissing == smallest
-            #start node could default to 1
-            #assumes the start node exists
-            #only purchases the children
-            #buy startNode outside of the main loop            
-            allSmalls = nodeSet.loc[mask1 & mask2 & mask3,:].copy()
+            mask2 = nodeSet.apply(lambda node : childOf(startNode, node.name) , axis=1) #pointless?
+            mask4 = nodeSet.userName == user 
+            smallest = nodeSet.loc[mask1 & mask2 & mask4, "childrenMissing"].min()#only pay out its own nodes, if none available, find next one that is
+            mask3 = nodeSet.childrenMissing == smallest   
+                  
+            allSmalls = nodeSet.loc[mask1 & mask2 & mask3 & mask4,:].copy()
             allSmalls["index"] = allSmalls.apply(lambda node: getIndex(node.name, startNode), axis=1)
             allSmalls.sort_values("index", inplace = True)
-            payNode = allSmalls.iloc[0]
-            print(payNode, " this is the node we're trying to pay out")
-
-            # this amount is the number of nodes the user buys
+            #the node that is easiest to pay out given the parameters
+            if not allSmalls.empty:
+                payNode = allSmalls.iloc[0]
+            else:
+                #if empty -> find first free node of the startNode to buy and set as the payNode 
+                id+= 1
+                payNode = getFirstFreeNode(startNode,id,tree.id,user,nodeSet)
+                           
+                amount -=1
+                ancestors = [node["parent"] for node in parentGenerator(payNode.name)]  
+                nodeSet.loc[ancestors] = nodeSet.loc[ancestors].apply(updateParents, args = [payNode.name], axis = 1)
+         
             targetValue = 31
             # ideally each child would be eat least 31
             children = pd.DataFrame([
@@ -150,13 +145,8 @@ class Tree (models.Model):
                 [payNode.child2, payNode.child2Value]],
                 columns = ["number","value"])
             children["index"] = children.apply(lambda kid: getIndex(kid.number, payNode.name), axis = 1)
-            children["pay"] = 0
-            #children.sort_values("index")
-            
-            children.sort_values(by=["value", "index"], inplace = True) #index not necessary?
-
-            #amount = 20 amount comes from function parameter
-
+            children["pay"] = 0                 
+            children.sort_values(by=["value", "index"], inplace = True)      
             #equalize children
             childDifference = children.iloc[1].value - children.iloc[0].value  #this might be pointless because the smaller one is always at the top
             valueMissing = max(targetValue - children.iloc[0].value, 0)
@@ -164,24 +154,20 @@ class Tree (models.Model):
             amount -= pay
             children.iloc[0,-1]+= pay
             children.iloc[0,-3]+= pay
-            
-
             # attempt to reach target
-            children.sort_values(by=["index"], inplace = True)
-           
+            children.sort_values(by=["index"], inplace = True)          
             valueMissing = max(targetValue - children.iloc[0].value, 0) *2
             pay = min(amount, valueMissing)
             amount -= pay
             half = int(pay/2)
             children.iloc[[0,1],[-1, -3]] += half        
             leftover = pay - (half*2)            
-            children.iloc[[0],[-1, -3]] +=leftover #leftover is 1 or 0        
+            children.iloc[[0],[-1, -3]] +=leftover        
             generator = nodeGenerator(payNode.name)
             child = 0
             childToggle ={0:1,1:0}
             childrenStacks = [[],[]]
-            pay = children.pay.sum()
-            print(children)
+            pay = children.pay.sum()    
             #invest points
             while pay > 0 :   
                 child = childToggle[child]                 
@@ -196,12 +182,12 @@ class Tree (models.Model):
             for node in childrenStacks:
                 generator = nodeGenerator(node)
                 next(generator) 
-                id +=1 #### flawed if there are multiple trees
+                id +=1 
                 row = {
                     'id': id,
                     'sold':False,
                     'changed':True,
-                    'tree_id': 1, # should be a varaiable
+                    'tree_id': tree.id, 
                     'childrenMissing': 62,
                     'userName': user, 
                     'child1': next(generator),
@@ -211,22 +197,12 @@ class Tree (models.Model):
                     'value': 299,    
                     }
                 nodeSet.loc[node] = row
-            #update parents
-            print("updating parents")                   
-            for node in childrenStacks:
-                    ancestors = [node["parent"] for node in parentGenerator(node)]                                          
+            #update parents 
+            print(f"sold node: {payNode.name}, updating parents")                 
+            for node in childrenStacks:                   
+                    ancestors = [node["parent"] for node in parentGenerator(node)]                                        
                     nodeSet.loc[ancestors] = nodeSet.loc[ancestors].apply(updateParents, args = [node], axis = 1)
-                    """    
-                    for nodePair in parentGenerator(node):                       
-                        parentNode = nodeSet.loc[nodePair["parent"]].copy() 
-                        print("shit")
-                        #very very slow
-                        nodeSet.loc[nodePair["parent"],["child1Value","child2Value","childrenMissing","sold"]]=updateParent(parentNode, nodePair["child"])
-                    """
-        #out of the main loop
-        #make a copy of all the "sold" nodes 
-
-        #   
+        #make a copy of all the "sold" nodes   
         print("updating the database")      
         newAndUpdatedIDList = nodeSet.loc[
             nodeSet.changed == True,[
@@ -241,17 +217,20 @@ class Tree (models.Model):
                 #"number"
                 ]].reset_index().rename(columns={"userName": "user_id","id":"pk"}).copy()
         #update the json field
+        #sold dictionary that is returned at the end
+        sold = nodeSet.loc[nodeSet.sold == True,["sold","userName"]].groupby("userName").count().copy()
+        sold = sold.reset_index().to_dict(orient="record" )
+        sold = {item["userName"]:item["sold"] for item in sold}
+        #add some fields that are needed in the front end
         nodeSet.sort_index(inplace = True)
         nodeSet["parent"] = nodeSet.apply(lambda node: findParent(node.name), axis = 1)
         nodeSet.iloc[0,-3] = ""
         biggest_number = nodeSet.iloc[-1].name
         nodeSet["x"]= nodeSet.apply(lambda node: getX(node.name), axis = 1)
-        nodeSet["y"]= nodeSet.apply(lambda node: getY(node.name,biggest_number), axis = 1)
-
+        nodeSet["y"]= nodeSet.apply(lambda node: getY(node.name,biggest_number), axis = 1)          
         users = User.objects.only("username","id").values()
         comprehensiveUsers = {user["id"]:user["username"] for user in users}
         nodeSet["userName"] = nodeSet["userName"].apply(lambda user: comprehensiveUsers[user])
-
         self.json_string =nodeSet.loc[:,["userName","child1","child1Value","child2","child2Value","childrenMissing","parent","x","y"]].reset_index().to_json(orient="records")
         #add parent, x, y fields
         #sqlite allows only 999 elements in a query 
@@ -264,9 +243,6 @@ class Tree (models.Model):
             NodeList = [Node(**node) for node in nodes.to_dict(orient="record")]            
             Node.objects.bulk_create(NodeList)#newAndUpdatedIDList[:950].to_dict(orient="record")) 
             newAndUpdatedIDList.drop(nodes.index, inplace = True)  
-
-        sold = nodeSet.loc[nodeSet.sold == True,["sold","userName"]].groupby("userName").count().copy()
-        sold = sold.reset_index().to_dict(orient="record" )
         self.save()
         return sold
 
