@@ -86,7 +86,7 @@ class Tree (models.Model):
             allSmalls.sort_values("index", inplace = True)            
             payNode = allSmalls.iloc[0]
             id += 1
-            node = getFirstFreeNode(payNode.name,id,tree.id,user,nodeSet)
+            node = getFirstFreeNode(payNode.name,id,tree.id,user,nodeSet)#naive as first node is not the best node
             amount -=1
             #find the first free child of the easiest to pay Node
             startNode = node.name #payNode.name
