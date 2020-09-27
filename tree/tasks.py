@@ -11,9 +11,10 @@ def buy(amount, user):
     index =1
     serialized_data = []
     while bool(payments.get(index)):
+        
         tree, created = Tree.objects.get_or_create(id = index, defaults = {"name":str(index),"json_string": json.dumps([])})        
         #merge result dictionary with the current one
-        for k,v in payments[index].items():       
+        for k,v in payments[index].items():               
             for k, v in tree.buy(amount = v,user = k).items():
                 payments.setdefault(index+1,{})
                 payments[index+1][k] = payments[index+1].get(k,0) + v   #           
@@ -26,9 +27,19 @@ def buy(amount, user):
     serialized_data += "]"
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
+        "task", 
+        {
+        "type": "tree.data", 
+        "text": "{}",
+        }
+    )  
+
+    async_to_sync(channel_layer.group_send)(
         "tree", 
         {
         "type": "tree.data", 
         "text": serialized_data,
         }
     )
+
+    
