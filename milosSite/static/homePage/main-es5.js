@@ -612,7 +612,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _classCallCheck(this, DataReceptionService);
 
         this.auth = auth;
-        this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
+        this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
         this.task_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]({});
       }
 
@@ -644,7 +644,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           socket.onmessage = function (event) {
             _this6.tree_data.next(JSON.parse(event.data));
 
-            console.log(_this6.tree_data.value, " coming from service"); //update.apply(this)
+            console.log(event.value, " coming from service"); //update.apply(this)
           };
 
           var taskSocket = new ReconnectingWebSocket(this.getSocketPath() + "task/");
@@ -1026,14 +1026,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }, {
             leading: true,
             trailing: true
-          }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["skip"])(1)).subscribe(function () {
+          })).subscribe(function () {
             console.log("reload triggered");
             d3.selectAll(".genericClass").select("svg").remove();
             setTimeout(function () {
               _this7.allTrees.forEach(function (tree, index) {
                 return _this7.renderTree(tree, index);
               });
-            }, 200);
+            }, 1000);
           }); //this.auth.user.next({username: "cumLord"})
 
           this.auth.get_user();

@@ -363,7 +363,7 @@ __webpack_require__.r(__webpack_exports__);
 class DataReceptionService {
     constructor(auth) {
         this.auth = auth;
-        this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]([]);
+        this.tree_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
         this.task_data = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]({});
     }
     getSocketPath() {
@@ -383,7 +383,7 @@ class DataReceptionService {
         let dis = this;
         socket.onmessage = (event) => {
             this.tree_data.next(JSON.parse(event.data));
-            console.log(this.tree_data.value, " coming from service");
+            console.log(event.value, " coming from service");
             //update.apply(this)
         };
         var taskSocket = new ReconnectingWebSocket(this.getSocketPath() + "task/");
@@ -565,12 +565,12 @@ class HomepageComponent {
     }
     ngOnInit() {
         this.reload = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"](null);
-        this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["throttle"])(ev => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(2000), { leading: true, trailing: true }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["skip"])(1)).subscribe(() => {
+        this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["throttle"])(ev => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(2000), { leading: true, trailing: true })).subscribe(() => {
             console.log("reload triggered");
             d3.selectAll(".genericClass").select("svg").remove();
             setTimeout(() => {
                 this.allTrees.forEach((tree, index) => this.renderTree(tree, index));
-            }, 200);
+            }, 1000);
         });
         //this.auth.user.next({username: "cumLord"})
         this.auth.get_user();

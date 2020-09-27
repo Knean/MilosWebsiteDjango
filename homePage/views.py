@@ -52,7 +52,7 @@ def resetTree(request):
         "tree", 
         {
         "type": "tree.data", 
-        "text": json_string,
+        "text": "[[]]",
         }
     )
     return redirect("home")
