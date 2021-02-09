@@ -160,7 +160,30 @@ def identifyParent(node, *args):
             if parent == node["parent"]:
                 return parent
 
+def insert_row_index(func):
+    def wrapper(nodeNumber):
 
+        
+        row = func(nodeNumber)
+        if nodeNumber == 1:
+            smaller_even_numbers = 0
+            smaller_odd_numbers = 0 
+
+        elif nodeNumber % 2 == 1:
+            #all even numbers are considered smaller
+            smaller_even_numbers = row["limits"]["even_limits"][0] / 2
+            smaller_odd_numbers = ( nodeNumber - row["limits"]["odd_limits"][0] )/2
+        else:
+            smaller_even_numbers = (row["limits"]["even_limits"][1] - nodeNumber)/2
+            smaller_odd_numbers = 0 
+    
+
+        
+  
+        row["h_index"] = int(smaller_odd_numbers + smaller_even_numbers ) 
+        return row
+    return wrapper
+@insert_row_index
 def findRow(nodeNumber, startNode =1):
     #potential infinite loop D:
     if nodeNumber == startNode:
