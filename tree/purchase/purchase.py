@@ -1,4 +1,5 @@
 from .purchase_utils import *
+from .blobing_utils import *
 from tree.utilities import childOf, nodeGenerator, getIndex
 import tree.models as models
 from django.contrib.auth.models import User
@@ -146,9 +147,11 @@ def buy(tree,amount, startNode = None, user = 1): #look up model inheritance
     nodeSet.iloc[0,-3] = ""
     biggest_number = nodeSet.iloc[-1].name
     nodeSet["x"]= nodeSet.apply(lambda node: getX(node.name), axis = 1)
-    nodeSet["y"]= nodeSet.apply(lambda node: getY(node.name,biggest_number), axis = 1)          
-
+    nodeSet["y"]= nodeSet.apply(lambda node: getY(node.name,biggest_number), axis = 1)      
     nodeSet["userName"] = nodeSet["userName"].apply(lambda user: comprehensiveUsers[user])
+    #start blobing here
+
+
     tree.json_string =nodeSet.loc[:,["userName","child1","child1Value","child2","child2Value","childrenMissing","parent","x","y"]].reset_index().to_json(orient="records")  
     # save to database
     #sqlite allows only 999 elements in a query 
