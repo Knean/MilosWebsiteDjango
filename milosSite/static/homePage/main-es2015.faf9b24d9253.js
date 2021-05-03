@@ -383,10 +383,6 @@ class DataReceptionService {
         let dis = this;
         socket.onmessage = (event) => {
             this.tree_data.next(JSON.parse(event.data));
-<<<<<<< HEAD:milosSite/static/homePage/main-es2015.86854d9206eb.js
-            console.log(event.value, " coming from service");
-=======
->>>>>>> blobs:homePage/static/homePage/main-es2015.js
             //update.apply(this)
         };
         var taskSocket = new ReconnectingWebSocket(this.getSocketPath() + "task/");
@@ -569,15 +565,6 @@ class HomepageComponent {
       throttle(ev => interval(2000), { leading: true, trailing: true }),
       ) */
     ngOnInit() {
-<<<<<<< HEAD:milosSite/static/homePage/main-es2015.86854d9206eb.js
-        this.reload = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"](null);
-        this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["throttle"])(ev => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(2000), { leading: true, trailing: true })).subscribe(() => {
-            console.log("reload triggered");
-            d3.selectAll(".genericClass").select("svg").remove();
-            setTimeout(() => {
-                this.allTrees.forEach((tree, index) => this.renderTree(tree, index));
-            }, 1000);
-=======
         this.reload = new rxjs__WEBPACK_IMPORTED_MODULE_4__["Subject"]();
         //.pipe(debounce(() => interval(2000)))
         this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["debounce"])(() => Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(500))).subscribe(() => {
@@ -594,7 +581,6 @@ class HomepageComponent {
                 this.reload.next("reload baby");
                 console.log("reload done");
             }
->>>>>>> blobs:homePage/static/homePage/main-es2015.js
         });
         //this.auth.user.next({username: "cumLord"})
         this.auth.get_user();

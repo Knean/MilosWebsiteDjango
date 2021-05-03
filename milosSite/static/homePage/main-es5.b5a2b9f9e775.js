@@ -644,10 +644,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           socket.onmessage = function (event) {
             _this6.tree_data.next(JSON.parse(event.data)); //update.apply(this)
 
-<<<<<<< HEAD:milosSite/static/homePage/main-es5.533ca7780961.js
-            console.log(event.value, " coming from service"); //update.apply(this)
-=======
->>>>>>> blobs:homePage/static/homePage/main-es5.js
           };
 
           var taskSocket = new ReconnectingWebSocket(this.getSocketPath() + "task/");
@@ -1026,22 +1022,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function ngOnInit() {
           var _this7 = this;
 
-<<<<<<< HEAD:milosSite/static/homePage/main-es5.533ca7780961.js
-          this.reload = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"](null);
-          this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["throttle"])(function (ev) {
-            return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["interval"])(2000);
-          }, {
-            leading: true,
-            trailing: true
-          })).subscribe(function () {
-            console.log("reload triggered");
-            d3.selectAll(".genericClass").select("svg").remove();
-            setTimeout(function () {
-              _this7.allTrees.forEach(function (tree, index) {
-                return _this7.renderTree(tree, index);
-              });
-            }, 1000);
-=======
           this.reload = new rxjs__WEBPACK_IMPORTED_MODULE_4__["Subject"](); //.pipe(debounce(() => interval(2000)))
 
           this.reload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["debounce"])(function () {
@@ -1069,7 +1049,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
               console.log("reload done");
             }
->>>>>>> blobs:homePage/static/homePage/main-es5.js
           }); //this.auth.user.next({username: "cumLord"})
 
           this.auth.get_user();

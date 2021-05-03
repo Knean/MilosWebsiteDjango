@@ -1,4 +1,5 @@
 from .purchase_utils import *
+from .blobing_utils import *
 from tree.utilities import childOf, nodeGenerator, getIndex
 import tree.models as models
 from django.contrib.auth.models import User
@@ -7,6 +8,7 @@ from asgiref.sync import async_to_sync
 import pandas as pd
 import numpy as np
 import sys
+import json
 import json
 def buy(tree,amount, startNode = None, user = 1): #look up model inheritance
     users = User.objects.only("username","id").values()
@@ -64,6 +66,7 @@ def buy(tree,amount, startNode = None, user = 1): #look up model inheritance
         createNode(nodeSet, 1, id, tree.id, user)
         amount -= 1
         id += 1
+    import json
     while amount > 0:
         #getPaynode 
         payNode, created = get_or_create_payNode(nodeSet, startNode, user, tree)
@@ -134,7 +137,7 @@ def buy(tree,amount, startNode = None, user = 1): #look up model inheritance
             "child2",
             "child2Value",
             #"number"
-            ]].reset_index().rename(columns={"userName": "user_id","id":"pk"}).copy()
+            ]].reset_index().rename(columns={"userName": "user_id","id":"pk"}).copy()#userid?
     #update the json field
     #sold dictionary that is returned at the end
     sold = nodeSet.loc[nodeSet.sold == True,["sold","userName"]].groupby("userName").count().copy()
@@ -146,10 +149,77 @@ def buy(tree,amount, startNode = None, user = 1): #look up model inheritance
     nodeSet.iloc[0,-3] = ""
     biggest_number = nodeSet.iloc[-1].name
     nodeSet["x"]= nodeSet.apply(lambda node: getX(node.name), axis = 1)
-    nodeSet["y"]= nodeSet.apply(lambda node: getY(node.name,biggest_number), axis = 1)          
+    nodeSet["y"]= nodeSet.apply(lambda node: getY(node.name,biggest_number), axis = 1)      
+    nodeSet["userName"] = nodeSet["userName"].apply(lambda user: comprehensiveUsers[user])#fix this, make it use id?
+    users_list = nodeSet["userName"].unique().tolist()
+    #start blobing here
+#################
 
-    nodeSet["userName"] = nodeSet["userName"].apply(lambda user: comprehensiveUsers[user])
-    tree.json_string =nodeSet.loc[:,["userName","child1","child1Value","child2","child2Value","childrenMissing","parent","x","y"]].reset_index().to_json(orient="records")  
+    #######################
+    nodeSet = nodeSet.reset_index()
+    nodeSet[["h_index", "row"]] = nodeSet.apply(update_row_index, axis = 1,result_type='expand')
+    #nodeSet["userName"] = nodeSet["userName"].apply(lambda user: comprehensiveUsers[user])
+    nodeSet.sort_index(inplace = True)
+    ##########################################################nodeSet 
+
+    low_rows = nodeSet[nodeSet.row > 9].copy()
+    nodeSet = nodeSet[nodeSet.row <10]
+    low_rows.set_index(['row','h_index'], inplace = True)
+    low_rows.sort_index(inplace = True)
+    low_rows["grow_to"] = 0 # only needed in blobs
+    low_rows["x"]= low_rows.apply(lambda node: getX(node.number), axis = 1)
+    try:
+       biggest_number = low_rows.iloc[-1].number
+    except : #make more specific
+        biggest_number =1
+    
+    low_rows["y"]= low_rows.apply(lambda node: getY(node.number,biggest_number), axis = 1) #wasteful
+    blobs = []
+    for row_number in low_rows.index.get_level_values(0).unique():
+        
+        row = low_rows.loc[row_number]#.set_index("h_index").sort_index() #add iteration for all rows
+        
+        row.rowd = 6 #wtf
+
+
+
+        #row = row.drop(range(10,20)) #remove before comitting
+
+        from collections import deque
+        iterator = row.iterrows()
+
+        start = next(iterator)[1]
+        finish = None
+        previous = start
+        deck = deque((start,),2)
+        for index, node in iterator:
+            deck.append((node))
+            if not nodes_match(deck[0],deck[1]): ##deck[1].name == deck[0].name+1: 
+                blobs.append((start, deck[0]))
+                start = deck[1]
+                #print(deck[0], "blob ends here")
+        blobs.append((start, deck[1]))
+    #blobs[0][0]
+    blobSet = []
+    for blob in blobs:
+        blobSet.append(merge_blobs(blob))
+    blobFrame = pd.DataFrame.from_records(
+        blobSet
+        )
+    
+    #######################################
+
+    #tree.json_string =nodeSet.loc[:,["userName","child1","child1Value","child2","child2Value","childrenMissing","parent","x","y"]].reset_index().to_json(orient="records")  
+    import json 
+    nodeSet.fillna("", inplace = True)
+    json_data = {
+        "nodes": nodeSet.loc[:,["userName","number", "child1","child1Value","child2","child2Value","childrenMissing","parent","x","y"]].reset_index().to_dict(orient="records") ,
+        "blobs": blobFrame.reset_index().to_dict(orient="records") ,
+        "users": users_list
+    } 
+    tree.json_string =json.dumps(json_data)  
+
+    # bad place to blobify
     # save to database
     #sqlite allows only 999 elements in a query 
     while not newAndUpdatedIDList.empty:           
