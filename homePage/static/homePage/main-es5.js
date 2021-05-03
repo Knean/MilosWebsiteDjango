@@ -158,7 +158,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       },
       directives: [_homepage_homepage_component__WEBPACK_IMPORTED_MODULE_1__["HomepageComponent"]],
-      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAvYXBwLmNvbXBvbmVudC5jc3MifQ== */"]
+      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAuY29tcG9uZW50LmNzcyJ9 */"]
     });
     /*@__PURE__*/
 
@@ -986,7 +986,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.color = 'primary';
         this.mode = 'determinate';
         this.value = 50;
-        this.allTrees = [];
         this.index = 0;
         this.tabs = [{
           selected: true,
@@ -1032,18 +1031,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             console.log("reload after debounce");
 
             _this7.allTrees.forEach(function (tree, index) {
-              return _this7.renderTree(tree, index);
+              return _this7.renderTree(tree, index, _this7.allTrees[0].users);
             });
-          });
+
+            console.log("didnt crash yet");
+          }); //it should start failing from here
+
           this.dataSubscription = this.data_service.tree_data.subscribe(function (result) {
             _this7.allTrees = result.sort(function (a, b) {
-              return b.length - a.length;
-            });
+              return b.nodes.length - a.nodes.length;
+            }); // why is this not failing
 
             if (result.length > 0) {
               console.log("data arrived ");
 
               _this7.reload.next("reload baby");
+
+              console.log("reload done");
             }
           }); //this.auth.user.next({username: "cumLord"})
 
@@ -1065,7 +1069,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }, {
         key: "renderTree",
-        value: function renderTree(data, index) {
+        value: function renderTree(tree, index, users_list) {
           var dims = {
             height: 1000,
             width: 2000
@@ -1074,7 +1078,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           console.log("removed svg "); //https://www.w3schools.com/jsref/dom_obj_all.asp
 
           try {
-            var graph = this.tree_service.generateTree(this.users, data, window.innerWidth, window.innerHeight);
+            var scale = d3.scaleOrdinal(d3["schemeSet3"]) // share scale between different types of trees
+            .domain(users_list.sort());
+            var graph = this.tree_service.generateTree(users_list, tree.nodes, window.innerWidth * 0.97, window.innerHeight, scale);
+            var graph_blobs = this.tree_service.generateBlobTree(users_list, tree.blobs, window.innerWidth * 0.97, window.innerHeight, scale);
             console.log("adding svg ");
             var svg = d3.select("#canvas-" + index).append("svg").attr('width', window.innerWidth).attr('height', window.innerHeight * 0.80);
             svg.append(function () {
@@ -1082,7 +1089,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }).attr('transform', function (d) {
               return "translate(".concat(10, ", ", 15, ")");
             });
-          } catch (_a) {}
+            svg.append(function () {
+              return graph_blobs.node();
+            }).attr('transform', function (d) {
+              return "translate(".concat(10, ", ", 15, ")");
+            });
+            console.log("dunno");
+          } catch (e) {
+            console.log("failed to draw a tree: ", e.message);
+          }
         }
       }, {
         key: "delete",
@@ -1237,7 +1252,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       },
       directives: [_angular_material_toolbar__WEBPACK_IMPORTED_MODULE_11__["MatToolbar"], _angular_common__WEBPACK_IMPORTED_MODULE_12__["NgIf"], _angular_material_button__WEBPACK_IMPORTED_MODULE_13__["MatButton"], _angular_material_progress_spinner__WEBPACK_IMPORTED_MODULE_14__["MatProgressSpinner"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_15__["MatIcon"], _angular_common__WEBPACK_IMPORTED_MODULE_12__["NgForOf"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_16__["MatMenuTrigger"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_16__["_MatMenu"], _angular_material_menu__WEBPACK_IMPORTED_MODULE_16__["MatMenuItem"]],
-      styles: [".tab_item[_ngcontent-%COMP%]{\r\n  flex-grow: 1;\r\n  flex-shrink: 1;\r\n\r\n  background-color:rgb(159, 159, 159) ;\r\n\r\n}\r\n\r\n.tab_item_selected[_ngcontent-%COMP%]{\r\n  background:white;\r\n}\r\n\r\n.tab_bar[_ngcontent-%COMP%]{\r\n  display: flex;\r\n  justify-content: space-around\r\n}\r\n\r\n.content[_ngcontent-%COMP%]{\r\n  display: none\r\n}\r\n\r\n.selected[_ngcontent-%COMP%]{\r\n  display: block\r\n}\r\n\r\n.hidden[_ngcontent-%COMP%]{\r\n  display: none\r\n}\r\n\r\n.loaderHolder[_ngcontent-%COMP%]{\r\n\r\n  display:flex;\r\n  align-items: center;\r\n  height: 65vh;\r\n\r\n}\r\n\r\n.progressClass[_ngcontent-%COMP%]{\r\n  height: 100%\r\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwcC9ob21lcGFnZS9ob21lcGFnZS5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFDQTtFQUNFLFlBQVk7RUFDWixjQUFjOztFQUVkLG9DQUFvQzs7QUFFdEM7O0FBRUE7RUFDRSxnQkFBZ0I7QUFDbEI7O0FBQ0E7RUFDRSxhQUFhO0VBQ2I7QUFDRjs7QUFDQTtFQUNFO0FBQ0Y7O0FBQ0E7RUFDRTtBQUNGOztBQUVBO0VBQ0U7QUFDRjs7QUFDQTs7RUFFRSxZQUFZO0VBQ1osbUJBQW1CO0VBQ25CLFlBQVk7O0FBRWQ7O0FBQ0E7RUFDRTtBQUNGIiwiZmlsZSI6ImFwcC9ob21lcGFnZS9ob21lcGFnZS5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiXHJcbi50YWJfaXRlbXtcclxuICBmbGV4LWdyb3c6IDE7XHJcbiAgZmxleC1zaHJpbms6IDE7XHJcblxyXG4gIGJhY2tncm91bmQtY29sb3I6cmdiKDE1OSwgMTU5LCAxNTkpIDtcclxuXHJcbn1cclxuXHJcbi50YWJfaXRlbV9zZWxlY3RlZHtcclxuICBiYWNrZ3JvdW5kOndoaXRlO1xyXG59XHJcbi50YWJfYmFye1xyXG4gIGRpc3BsYXk6IGZsZXg7XHJcbiAganVzdGlmeS1jb250ZW50OiBzcGFjZS1hcm91bmRcclxufVxyXG4uY29udGVudHtcclxuICBkaXNwbGF5OiBub25lXHJcbn1cclxuLnNlbGVjdGVke1xyXG4gIGRpc3BsYXk6IGJsb2NrXHJcbn1cclxuXHJcbi5oaWRkZW57XHJcbiAgZGlzcGxheTogbm9uZVxyXG59XHJcbi5sb2FkZXJIb2xkZXJ7XHJcblxyXG4gIGRpc3BsYXk6ZmxleDtcclxuICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gIGhlaWdodDogNjV2aDtcclxuXHJcbn1cclxuLnByb2dyZXNzQ2xhc3N7XHJcbiAgaGVpZ2h0OiAxMDAlXHJcbn1cclxuIl19 */"]
+      styles: [".tab_item[_ngcontent-%COMP%]{\r\n  flex-grow: 1;\r\n  flex-shrink: 1;\r\n\r\n  background-color:rgb(159, 159, 159) ;\r\n\r\n}\r\n\r\n.tab_item_selected[_ngcontent-%COMP%]{\r\n  background:white;\r\n}\r\n\r\n.tab_bar[_ngcontent-%COMP%]{\r\n  display: flex;\r\n  justify-content: space-around\r\n}\r\n\r\n.content[_ngcontent-%COMP%]{\r\n  display: none\r\n}\r\n\r\n.selected[_ngcontent-%COMP%]{\r\n  display: block\r\n}\r\n\r\n.hidden[_ngcontent-%COMP%]{\r\n  display: none\r\n}\r\n\r\n.loaderHolder[_ngcontent-%COMP%]{\r\n\r\n  display:flex;\r\n  align-items: center;\r\n  height: 65vh;\r\n\r\n}\r\n\r\n.progressClass[_ngcontent-%COMP%]{\r\n  height: 100%\r\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImhvbWVwYWdlL2hvbWVwYWdlLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUNBO0VBQ0UsWUFBWTtFQUNaLGNBQWM7O0VBRWQsb0NBQW9DOztBQUV0Qzs7QUFFQTtFQUNFLGdCQUFnQjtBQUNsQjs7QUFDQTtFQUNFLGFBQWE7RUFDYjtBQUNGOztBQUNBO0VBQ0U7QUFDRjs7QUFDQTtFQUNFO0FBQ0Y7O0FBRUE7RUFDRTtBQUNGOztBQUNBOztFQUVFLFlBQVk7RUFDWixtQkFBbUI7RUFDbkIsWUFBWTs7QUFFZDs7QUFDQTtFQUNFO0FBQ0YiLCJmaWxlIjoiaG9tZXBhZ2UvaG9tZXBhZ2UuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIlxyXG4udGFiX2l0ZW17XHJcbiAgZmxleC1ncm93OiAxO1xyXG4gIGZsZXgtc2hyaW5rOiAxO1xyXG5cclxuICBiYWNrZ3JvdW5kLWNvbG9yOnJnYigxNTksIDE1OSwgMTU5KSA7XHJcblxyXG59XHJcblxyXG4udGFiX2l0ZW1fc2VsZWN0ZWR7XHJcbiAgYmFja2dyb3VuZDp3aGl0ZTtcclxufVxyXG4udGFiX2JhcntcclxuICBkaXNwbGF5OiBmbGV4O1xyXG4gIGp1c3RpZnktY29udGVudDogc3BhY2UtYXJvdW5kXHJcbn1cclxuLmNvbnRlbnR7XHJcbiAgZGlzcGxheTogbm9uZVxyXG59XHJcbi5zZWxlY3RlZHtcclxuICBkaXNwbGF5OiBibG9ja1xyXG59XHJcblxyXG4uaGlkZGVue1xyXG4gIGRpc3BsYXk6IG5vbmVcclxufVxyXG4ubG9hZGVySG9sZGVye1xyXG5cclxuICBkaXNwbGF5OmZsZXg7XHJcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICBoZWlnaHQ6IDY1dmg7XHJcblxyXG59XHJcbi5wcm9ncmVzc0NsYXNze1xyXG4gIGhlaWdodDogMTAwJVxyXG59XHJcbiJdfQ== */"]
     });
     /*@__PURE__*/
 
@@ -1467,7 +1482,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       },
       directives: [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_3__["MatDialogTitle"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_y"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatFormField"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatLabel"], _angular_material_input__WEBPACK_IMPORTED_MODULE_5__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["MaxLengthValidator"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControlName"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatHint"], _angular_material_button__WEBPACK_IMPORTED_MODULE_6__["MatButton"]],
-      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAvbG9naW4vbG9naW4uY29tcG9uZW50LmNzcyJ9 */"]
+      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJsb2dpbi9sb2dpbi5jb21wb25lbnQuY3NzIn0= */"]
     });
     /*@__PURE__*/
 
@@ -1744,7 +1759,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       },
       directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_3__["ɵangular_packages_forms_forms_y"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["NgForm"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatFormField"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatLabel"], _angular_material_input__WEBPACK_IMPORTED_MODULE_5__["MatInput"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatHint"], _angular_material_button__WEBPACK_IMPORTED_MODULE_6__["MatButton"]],
-      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAvcHVyY2hhc2UvcHVyY2hhc2UuY29tcG9uZW50LmNzcyJ9 */"]
+      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwdXJjaGFzZS9wdXJjaGFzZS5jb21wb25lbnQuY3NzIn0= */"]
     });
     /*@__PURE__*/
 
@@ -1978,7 +1993,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       },
       directives: [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_3__["MatDialogTitle"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_y"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatFormField"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatLabel"], _angular_material_input__WEBPACK_IMPORTED_MODULE_5__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["MaxLengthValidator"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControlName"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatHint"], _angular_material_button__WEBPACK_IMPORTED_MODULE_6__["MatButton"]],
-      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAvcmVnaXN0ZXIvcmVnaXN0ZXIuY29tcG9uZW50LmNzcyJ9 */"]
+      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJyZWdpc3Rlci9yZWdpc3Rlci5jb21wb25lbnQuY3NzIn0= */"]
     });
     /*@__PURE__*/
 
@@ -2115,23 +2130,146 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       function TreeGeneratorService() {
         _classCallCheck(this, TreeGeneratorService);
       }
+      /*   public generateLegend(users: User[]){
+      
+        } */
+
 
       _createClass(TreeGeneratorService, [{
-        key: "generateTree",
-        value: function generateTree(users, data, width, height) {
+        key: "generateBlobTree",
+        value: function generateBlobTree(users, data, width, height, scale) {
+          //create blob type
           d3.create;
           var height = height - 200; //add the group element that will contain all the drawings of the graph
           //graph = svg.append('g').attr('transform', 'translate(50, 50)');
 
           users = users.sort(function (a, b) {
-            return a.username.localeCompare(b.username);
+            return a.localeCompare(b);
           });
           console.log(users, "users ");
           var graph = d3.create('svg:g');
-          var scale;
-          scale = d3.scaleOrdinal(d3["schemeSet3"]).domain(users.map(function (element) {
-            return element.username;
-          }));
+          /*     scale = d3.scaleOrdinal(d3["schemeSet3"])
+                .domain(users.map((element) => element.username)) */
+
+          graph.selectAll('.node').remove(); //no needed
+
+          graph.selectAll('.link').remove();
+          data.sort(function (a, b) {
+            return a.number - b.number;
+          });
+          /*     let even = data.filter((a)=>a.number%2 == 0).sort((a,b)=>b.number - a .number)
+              let odd = data.filter((a)=>a.number%2 == 1).sort((a,b)=>a.number - b .number)
+          
+              data = even.concat(odd) */
+
+          /*
+              data.sort((a, b) => a.number % 2 == 0 ?  b.number - a.number:0)
+          
+              data.sort((a, b) => a.number % 2 == 1 ? a.number - b.number:0)
+           */
+
+          console.log(data, " data that is not sorted"); // this is broken !! sort on the serverside
+          // stratify the data
+
+          /*     var rootNode = d3.stratify()
+                .id(function (d:any) {
+                  return d.number
+                })
+                .parentId(function (d:any) {
+                  return d.parent;
+                })
+                (data) */
+          //stratified data -> tree form data
+          //var treeData = d3.tree().size([width * 0.97, height*0.75])(rootNode)
+          //create the selection of nodes from the tree data descendants
+
+          /*
+              var nodes = graph.selectAll('.node')
+                .data(treeData.descendants())
+           */
+
+          var nodes = graph.selectAll('.node').data(data);
+          /*
+          var nodes2 = graph.selectAll('.node')
+          .data(treeData.descendants())
+           */
+          // save the links data from the stratified data
+          // for now no links :)
+
+          /*     var links = graph.selectAll('.link').data(rootNode.links())
+          
+              // draw the links as path elements
+              links.enter().append('path')
+                .attr('stroke', 'blue')
+                .attr('d', d3.linkVertical()
+                  .x(function (d) { return d.data.x * width})
+                  .y(function (d) { return d.data.y * height }))
+                .attr('class', 'link')
+                .attr('fill', 'none')
+                .attr('stroke', d => d.target.data.hasOwnProperty('userName') ? scale(d.source.data.userName) : 'gray')////#aaa
+                .attr('stroke-width', 2) */
+          // add a group for each node with the specified coordinates
+
+          var enterNodes = nodes.enter().append('g').attr('transform', function (d, i, n) {
+            //rotates the tree
+            var x = d.x * width;
+            var y = d.y * height;
+            return "translate(".concat(x, ",").concat(y, ")");
+          }).attr('class', "node"); // draw rectangles in each node group
+
+          var rectangles = enterNodes.append('rect').attr('fill', function (d) {
+            return d.userName != null ? scale(d.userName) : 'gray';
+          }).attr('stroke', 'black').attr('width', function (d) {
+            var boxWidth = d.grow_to * width - d.x * width + 30;
+            return boxWidth; // >= 30? boxWidth: 30
+          }) // d.growto * width - d.x * width //d.spread * width + 30
+          .attr('height', 30).attr('transform', function (d) {
+            return "translate(".concat(-5, ", ").concat(-10, ")");
+          }).raise(); // add a click event on each rectangle
+
+          enterNodes.on("click", function (d) {
+            console.log(d);
+          });
+          enterNodes.on("mouseenter", function (d) {}); // add text to each of the node groups
+          // add more stuff to this like to and from
+
+          enterNodes.append('text').text(function (d) {
+            return d.number;
+          }).attr('fill', function (d) {
+            return d.childrenMissing > 0 ? 'black' : "red";
+          }).attr('transform', function (d) {
+            return "translate(".concat(2, ", ", 10, ")");
+          }); //already done by the other function
+
+          /*  var colorLegend = d3.legendColor()
+             .shape("path", d3.symbol().type(d3.symbolTriangle).size(150)())
+             .shapePadding(10)
+             //use cellFilter to hide the "e" cell
+             .cellFilter(function (d) { return d.label !== "e" })
+             .scale(scale)
+                  graph.append("g")
+             .attr("class", "userLegend")
+           graph.select(".userLegend").call(colorLegend) */
+
+          return graph;
+        }
+      }, {
+        key: "generateTree",
+        value: function generateTree(users, data, width, height, scale) {
+          d3.create; //wtf does this do?
+
+          var height = height - 200; //add the group element that will contain all the drawings of the graph
+          //graph = svg.append('g').attr('transform', 'translate(50, 50)');
+
+          users = users.sort(function (a, b) {
+            return a.localeCompare(b);
+          });
+          console.log(users, "users ");
+          var graph = d3.create('svg:g');
+          /*     scale = d3.scaleOrdinal(d3["schemeSet3"])
+                .domain(users) */
+          //.map((element) => element.username))
+
           graph.selectAll('.node').remove();
           graph.selectAll('.link').remove();
           data.sort(function (a, b) {
@@ -2197,7 +2335,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           var rectangles = enterNodes.append('rect').attr('fill', function (d) {
             return d.userName != null ? scale(d.userName) : 'gray';
-          }).attr('stroke', 'black').attr('width', 30) //30
+          }).attr('stroke', 'black').attr('width', 30) //d.spread * width + 30
           .attr('height', 30).attr('transform', function (d) {
             return "translate(".concat(-5, ", ").concat(-10, ")");
           }).raise(); // add a click event on each rectangle
@@ -2214,7 +2352,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }).attr('transform', function (d) {
             return "translate(".concat(2, ", ", 10, ")");
           });
-          var colorLegend = d3.legendColor().shape("path", d3.symbol().type(d3.symbolTriangle).size(150)()).shapePadding(10) //use cellFilter to hide the "e" cell
+          var colorLegend = d3.legendColor().shape("path", d3.symbol().type(d3.symbolTriangle).size(150)()).shapePadding(40) //use cellFilter to hide the "e" cell
           .cellFilter(function (d) {
             return d.label !== "e";
           }).scale(scale);
@@ -2353,7 +2491,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         }
       },
-      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAvdHJlZS90cmVlLmNvbXBvbmVudC5jc3MifQ== */"]
+      styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0cmVlL3RyZWUuY29tcG9uZW50LmNzcyJ9 */"]
     });
     /*@__PURE__*/
 

@@ -27,13 +27,13 @@ class TreeConsumer(WebsocketConsumer):
                 serializer = NodeSerializer(nodes, many=True)        
                 serialized_data.append( serializer.data)           
                 
-            tree = Tree.objects.first()
+            tree = Tree.objects.first()#why this now?
             #sends to everyone????
             async_to_sync(self.channel_layer.group_send)(
             "tree", 
             {
             "type": "tree.data", 
-            "text": json.dumps(serialized_data),
+            "text":json.dumps(serialized_data),
             }
         )
 
