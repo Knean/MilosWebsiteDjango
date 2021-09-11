@@ -1007,6 +1007,7 @@ class RegisterComponent {
         this.dialogRef.close();
     }
     ngOnInit() {
+        this.auth.get_users();
         this.auth.userList.subscribe(dataResponse => {
             this.users = dataResponse;
             console.log(this.users, "this is the users data form subscription");

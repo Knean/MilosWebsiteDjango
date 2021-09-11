@@ -31,6 +31,7 @@ def user_list(request):
     """
     if request.method == 'GET':
         users = User.objects.all()
+        print("someone requested the users")
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 

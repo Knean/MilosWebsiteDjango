@@ -1919,6 +1919,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function ngOnInit() {
           var _this9 = this;
 
+          this.auth.get_users();
           this.auth.userList.subscribe(function (dataResponse) {
             _this9.users = dataResponse;
             console.log(_this9.users, "this is the users data form subscription");
