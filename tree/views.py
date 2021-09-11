@@ -23,7 +23,7 @@ def node_list(request):
         #return Response(json.loads(tree.json_string or '{}'))
         return Response(tree.json_string)
 
-
+@csrf_exempt
 @api_view(['GET'])
 def user_list(request):
     """

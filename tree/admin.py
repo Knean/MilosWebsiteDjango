@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Tree, Node , ChildNode
+from .models import Tree, Node , ChildNode, Profile
 # Register your models here.
 admin.site.register(Tree)
 admin.site.register(Node)
 admin.site.register(ChildNode)
+admin.site.register(Profile)
