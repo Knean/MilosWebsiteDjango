@@ -46,7 +46,7 @@ def buy(request):
     print(request.user.id, " is buying: ", amount)  
     # we dont use celery locally
     if settings.LOCAL_DEPLOYMENT:
-        tasks.buy(amount = amount,user =3)
+        tasks.buy(amount = amount,user =2)
         '''         try:
             print(request.user.id, " 'tis the id")
             tasks.buy(amount = amount,user =request.user.id)

@@ -11,6 +11,8 @@ from tree.serializers import NodeSerializer
 import json
 # Create your views here.
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 
 @ensure_csrf_cookie
 def displayHomePage(request, userForm = None, registrationForm = None):
@@ -56,4 +58,13 @@ def resetTree(request):
         }
     )
     return redirect("home")
+@csrf_exempt
+@api_view(['POST'])
+def requestListener(request):
+    print("this is the request that came through request Listner:")
+    print(request)
+    print(request.body)
+    print(request.POST)
+    print(request.META)
+    return (HttpResponse("this is a request listener, thanks"))
 

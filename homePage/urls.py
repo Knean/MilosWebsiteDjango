@@ -6,5 +6,6 @@ urlpatterns = [
     path('', views.displayHomePage, name='home'),
     path('gay', views.createTreeNode, name = 'creation'),
     path('delete',views.resetTree, name = 'delete'),
-    path('auth/', include ("authentication.urls"))
+    path('auth/', include ("authentication.urls")),
+    path('requestlistener',views.requestListener, name ='requestListener')
 ]
